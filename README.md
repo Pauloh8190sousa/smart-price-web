@@ -1,73 +1,153 @@
-# React + TypeScript + Vite
+# Smart Price Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend da aplicação **Smart Price**, desenvolvido com React, TypeScript, Vite e Shadcn UI.
 
-Currently, two official plugins are available:
+O projeto tem como objetivo fornecer uma interface moderna e performática para gerenciamento e consulta de preços, autenticação de usuários e operações administrativas.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
+- React Router DOM
+- React Hook Form
+- Zod
+- Axios
+- Tailwind CSS v4
+- Shadcn UI
+- Sonner
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Estrutura do Projeto
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```txt
+src/
+├── assets/
+├── components/
+│   ├── form/
+│   └── ui/
+├── lib/
+├── pages/
+├── routes/
+├── services/
+├── types/
+├── index.css
+└── main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📦 Instalação
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Clone o projeto:
+
+```bash
+git clone <URL_DO_REPOSITORIO>
 ```
+
+Entre na pasta:
+
+```bash
+cd smart-price-web
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+---
+
+## ⚙️ Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+---
+
+## ▶️ Executando o Projeto
+
+Modo desenvolvimento:
+
+```bash
+npm run dev
+```
+
+Build de produção:
+
+```bash
+npm run build
+```
+
+Preview da build:
+
+```bash
+npm run preview
+```
+
+---
+
+## 🔐 Autenticação
+
+A autenticação é baseada em JWT.
+
+Fluxo atual:
+
+- Login via API
+- Armazenamento do token no `localStorage`
+- Interceptor Axios adicionando automaticamente o `Authorization`
+- Rotas privadas protegidas
+
+---
+
+## 🧩 Componentes Reutilizáveis
+
+O projeto utiliza componentes reutilizáveis para formulários:
+
+- `Form`
+- `FormField`
+- `FormSubmit`
+
+Com integração entre:
+
+- React Hook Form
+- Zod
+- Shadcn UI
+
+---
+
+## 📄 Funcionalidades Atuais
+
+- Login
+- Logout
+- Proteção de rotas privadas
+- Toasts de feedback
+- Integração com API
+- Estrutura escalável para CRUDs
+
+---
+
+## 📌 Próximas Implementações
+
+- Dashboard completo
+- CRUD de produtos
+- CRUD de lojas
+- Controle de permissões
+- Tema dark/light
+- Sidebar administrativa
+- Tabelas e filtros
+- Skeleton loading
+- Persistência de usuário autenticado
+
+---
+
+## 👨‍💻 Autor
+
+Paulo Henrique Sousa
