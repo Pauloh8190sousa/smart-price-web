@@ -51,22 +51,24 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm border-border/60 shadow-lg">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-semibold">Entrar</CardTitle>
+    <Card className="w-full max-w-md border-0 bg-transparent shadow-none">
+      <CardHeader className="space-y-2 px-0">
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Entrar
+        </CardTitle>
 
         <p className="text-sm text-muted-foreground">
-          Faça login para acessar o Smart Price
+          Faça login para acessar sua conta
         </p>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="px-0">
         <Form form={form} onSubmit={handleLogin}>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <FormField
               name="email"
               type="email"
-              autoComplete="email"
+              autoComplete="username"
               label="Email"
               placeholder="Digite seu email"
             />
