@@ -9,6 +9,6 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <>
     <AppRoutes />
-    <Toaster />
+    <Toaster position="top-center" richColors closeButton duration={3000} />
   </>,
 );

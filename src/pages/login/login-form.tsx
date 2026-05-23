@@ -33,7 +33,9 @@ export function LoginForm() {
 
       saveToken(response.token);
 
-      toast.success(`Bem-vindo, ${response.user.name}!`);
+      toast.success("Login realizado com sucesso", {
+        description: `Bem-vindo, ${response.user.name}!`,
+      });
 
       navigate("/dashboard");
     } catch (error) {
@@ -41,7 +43,9 @@ export function LoginForm() {
         const message =
           error.response?.data?.message ?? "Erro ao realizar login";
 
-        toast.error(message);
+        toast.error("Falha no login", {
+          description: message,
+        });
 
         return;
       }
@@ -51,8 +55,21 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md border-0 bg-transparent shadow-none">
-      <CardHeader className="space-y-2 px-0">
+    <Card
+      className="
+    flex
+    min-h-[400px]
+    w-full
+    max-w-md
+    flex-col
+    justify-center
+    border-border/50
+    bg-card/80
+    shadow-xl
+    backdrop-blur
+  "
+    >
+      <CardHeader className="space-y-2 pb-2">
         <CardTitle className="text-3xl font-bold tracking-tight">
           Entrar
         </CardTitle>
@@ -62,9 +79,9 @@ export function LoginForm() {
         </p>
       </CardHeader>
 
-      <CardContent className="px-0">
+      <CardContent className="flex flex-1 flex-col justify-center">
         <Form form={form} onSubmit={handleLogin}>
-          <div className="space-y-5">
+          <div className="space-y-6">
             <FormField
               name="email"
               type="email"

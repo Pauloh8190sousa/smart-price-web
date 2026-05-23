@@ -10,7 +10,7 @@ export function FormSubmit({ children }: Props) {
 
   return (
     <Button
-      className="h-11 w-full text-sm font-medium"
+      className="h-11 w-full text-sm font-medium cursor-pointer"
       type="submit"
       disabled={form.formState.isSubmitting}
     >
