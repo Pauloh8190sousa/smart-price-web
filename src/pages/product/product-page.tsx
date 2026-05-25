@@ -18,11 +18,22 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { getProductBySlug } from "@/services/product/get-product-by-slug";
 
+import type { PriceHistory } from "@/types/price-history";
+import type { ProductPrice } from "@/types/product-price";
+import type { ProductPriceStats } from "@/types/product-price-stats";
+
+import { getProductPriceHistory } from "@/services/product/get-product-price-history";
+import { getProductPrices } from "@/services/product/get-product-prices";
+
+import { getProductPriceStats } from "@/services/product/get-product-price-stats";
 import type { Product } from "@/types/product";
 
 export function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [prices, setPrices] = useState<ProductPrice[]>([]);
+  const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
+  const [stats, setStats] = useState<ProductPriceStats | null>(null);
 
   const navigate = useNavigate();
 
@@ -40,6 +51,16 @@ export function ProductPage() {
         const data = await getProductBySlug(slug);
 
         setProduct(data);
+
+        const [pricesData, historyData, statsData] = await Promise.all([
+          getProductPrices(data.id),
+          getProductPriceHistory(data.id),
+          getProductPriceStats(data.id),
+        ]);
+
+        setPrices(pricesData);
+        setPriceHistory(historyData);
+        setStats(statsData);
       } catch {
         toast.error("Erro ao carregar produto");
 
@@ -255,7 +276,12 @@ export function ProductPage() {
                     <TrendingDown className="size-4 text-green-600" />
                   </div>
 
-                  <p className="text-2xl font-bold text-green-600">R$ 4.599</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {Number(stats?.lowestPrice || 0).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -269,7 +295,12 @@ export function ProductPage() {
                     <TrendingUp className="size-4 text-red-600" />
                   </div>
 
-                  <p className="text-2xl font-bold text-red-600">R$ 5.499</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {Number(stats?.highestPrice || 0).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -281,7 +312,12 @@ export function ProductPage() {
                     <Tag className="size-4 text-primary" />
                   </div>
 
-                  <p className="text-2xl font-bold">R$ 4.999</p>
+                  <p className="text-2xl font-bold">
+                    {Number(stats?.averagePrice || 0).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -293,7 +329,9 @@ export function ProductPage() {
                     <Store className="size-4 text-primary" />
                   </div>
 
-                  <p className="text-2xl font-bold">12</p>
+                  <p className="text-2xl font-bold">
+                    {stats?.storesCount || 0}
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -311,61 +349,104 @@ export function ProductPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex flex-col gap-4 rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="font-medium">Kabum</p>
+                  {prices.map((price) => (
+                    <div
+                      key={price.id}
+                      className="
+        flex flex-col gap-4 rounded-xl border border-border/50
+        p-4 transition-shadow hover:shadow-lg
+        sm:flex-row sm:items-center sm:justify-between
+      "
+                    >
+                      <div>
+                        <p className="font-medium">{price.storeName}</p>
 
-                      <p className="text-sm text-muted-foreground">
-                        Entrega em até 3 dias
-                      </p>
+                        <p className="text-sm text-muted-foreground">
+                          {price.available ? "Disponível" : "Indisponível"}
+                        </p>
+
+                        {price.installmentQuantity > 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            {price.installmentQuantity}x de{" "}
+                            {Number(price.installmentValue).toLocaleString(
+                              "pt-BR",
+                              {
+                                style: "currency",
+                                currency: "BRL",
+                              },
+                            )}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="text-left sm:text-right">
+                        <p className="text-2xl font-bold text-green-600">
+                          {Number(price.price).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </p>
+
+                        <Button
+                          size="sm"
+                          className="mt-2 cursor-pointer"
+                          onClick={() =>
+                            window.open(price.productUrl, "_blank")
+                          }
+                        >
+                          Ver oferta
+                        </Button>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-                    <div className="text-left sm:text-right">
-                      <p className="text-2xl font-bold text-green-600">
-                        R$ 4.599,90
-                      </p>
+            <Card className="border-border/50 bg-card/80 backdrop-blur">
+              <CardContent className="p-6">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold">Histórico de preços</h2>
 
-                      <Button size="sm" className="mt-2 cursor-pointer">
-                        Ver oferta
-                      </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Últimas alterações de preço encontradas
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {priceHistory.map((history) => (
+                    <div
+                      key={history.id}
+                      className="
+            flex items-center justify-between rounded-xl
+            border border-border/50 p-4
+          "
+                    >
+                      <div>
+                        <p className="font-medium">{history.storeName}</p>
+
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(history.changedAt).toLocaleString("pt-BR")}
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground line-through">
+                          {Number(history.oldPrice).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </p>
+
+                        <p className="font-bold text-green-600">
+                          {Number(history.newPrice).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="flex flex-col gap-4 rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="font-medium">Amazon</p>
-
-                      <p className="text-sm text-muted-foreground">
-                        Frete grátis disponível
-                      </p>
-                    </div>
-
-                    <div className="text-left sm:text-right">
-                      <p className="text-2xl font-bold">R$ 4.799,90</p>
-
-                      <Button size="sm" className="mt-2 cursor-pointer">
-                        Ver oferta
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-4 rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="font-medium">Magazine Luiza</p>
-
-                      <p className="text-sm text-muted-foreground">
-                        Parcelamento em até 10x
-                      </p>
-                    </div>
-
-                    <div className="text-left sm:text-right">
-                      <p className="text-2xl font-bold">R$ 4.999,90</p>
-
-                      <Button size="sm" className="mt-2 cursor-pointer">
-                        Ver oferta
-                      </Button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

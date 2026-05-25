@@ -1,6 +1,8 @@
+import { Controller, useFormContext } from "react-hook-form";
+
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Controller, useFormContext } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   name: string;
@@ -8,6 +10,10 @@ type Props = {
   placeholder?: string;
   type?: string;
   autoComplete?: string;
+  textarea?: boolean;
+  onChange?: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
 };
 
 export function FormField({
@@ -16,6 +22,8 @@ export function FormField({
   placeholder,
   type = "text",
   autoComplete,
+  textarea = false,
+  onChange,
 }: Props) {
   const form = useFormContext();
 
@@ -27,14 +35,33 @@ export function FormField({
         <Field data-invalid={fieldState.invalid}>
           {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
 
-          <Input
-            {...field}
-            id={name}
-            type={type}
-            placeholder={placeholder}
-            autoComplete={autoComplete}
-            aria-invalid={fieldState.invalid}
-          />
+          {textarea ? (
+            <Textarea
+              {...field}
+              id={name}
+              placeholder={placeholder}
+              aria-invalid={fieldState.invalid}
+              onChange={(e) => {
+                field.onChange(e);
+
+                onChange?.(e);
+              }}
+            />
+          ) : (
+            <Input
+              {...field}
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              autoComplete={autoComplete}
+              aria-invalid={fieldState.invalid}
+              onChange={(e) => {
+                field.onChange(e);
+
+                onChange?.(e);
+              }}
+            />
+          )}
 
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>

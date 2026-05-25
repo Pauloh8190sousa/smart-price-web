@@ -1,4 +1,4 @@
-import { LogOut, Package, Pencil, Search, Trash2 } from "lucide-react";
+import { LogOut, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -92,22 +92,32 @@ export function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex w-full flex-col gap-1 sm:max-w-sm">
-            <div className="relative">
-              <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="flex w-full flex-col gap-2 sm:w-auto">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="relative sm:w-80">
+                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 
-              <Input
-                type="search"
-                autoComplete="off"
-                aria-label="Buscar produto"
-                placeholder="Buscar produto..."
-                className="pl-9"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+                <Input
+                  type="search"
+                  autoComplete="off"
+                  aria-label="Buscar produto"
+                  placeholder="Buscar produto..."
+                  className="pl-9"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              <Button
+                className="shrink-0 cursor-pointer"
+                onClick={() => navigate("/products/create")}
+              >
+                <Plus className="size-4" />
+                Adicionar produto
+              </Button>
             </div>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground pl-2">
               {filteredProducts.length} produto(s) encontrado(s)
             </p>
           </div>
