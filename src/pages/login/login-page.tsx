@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 
 import { getToken } from "@/lib/auth";
 
-import { Package } from "lucide-react";
+import logoWeb from "@/assets/logoWeb.png";
 import { LoginForm } from "./login-form";
 
 export function LoginPage() {
@@ -23,19 +23,15 @@ export function LoginPage() {
   bg-card/95 shadow-2xl backdrop-blur
 "
       >
-        <div className="hidden flex-1 flex-col justify-between bg-muted/40 p-10 lg:flex">
+        <div className="hidden flex-1 flex-col justify-between bg-muted/40 p-12 lg:flex">
           <div>
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Package className="size-6" />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold">Smart Price</h1>
-
-                <p className="text-sm text-muted-foreground">
-                  Busca inteligente de preços
-                </p>
+              <div className="mb-6">
+                <img
+                  src={logoWeb}
+                  alt="Smart Price"
+                  className="h-20 w-auto object-contain"
+                />
               </div>
             </div>
 

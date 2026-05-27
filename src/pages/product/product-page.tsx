@@ -158,6 +158,15 @@ export function ProductPage() {
               <Trash2 className="size-4" />
               Excluir
             </Button>
+
+            <Button
+              className="flex-1 cursor-pointer sm:flex-none"
+              onClick={() =>
+                navigate(`/products/${product.slug}/prices/create`)
+              }
+            >
+              Adicionar preço
+            </Button>
           </div>
         </div>
 

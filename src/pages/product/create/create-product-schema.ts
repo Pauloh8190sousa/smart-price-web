@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const createProductSchema = z.object({
-  name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  name: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres"),
 
   slug: z.string().min(3, "Slug deve ter pelo menos 3 caracteres"),
 

@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import logoWeb from "@/assets/logoWeb.png";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -62,12 +64,12 @@ export function DashboardPage() {
     <main className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b border-border bg-card/80 shadow-sm backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">Smart Price</h1>
-
-            <p className="text-sm text-muted-foreground">
-              Gerenciamento de produtos e preços
-            </p>
+          <div className="flex items-center gap-3">
+            <img
+              src={logoWeb}
+              alt="Smart Price"
+              className="h-14 w-auto object-contain"
+            />
           </div>
 
           <Button

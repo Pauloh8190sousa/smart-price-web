@@ -1,10 +1,10 @@
-// pages/product/create/create-product-page.tsx
+// pages/product-price/create/create-product-price-page.tsx
 
 import logoWeb from "@/assets/logoWeb.png";
 
-import { CreateProductForm } from "./create-product-form";
+import { CreateProductPriceForm } from "./create-product-price-form";
 
-export function CreateProductPage() {
+export function CreateProductPricePage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="absolute inset-0 bg-grid-white/[0.02]" />
@@ -20,7 +20,7 @@ export function CreateProductPage() {
           </div>
         </div>
 
-        <CreateProductForm />
+        <CreateProductPriceForm />
       </section>
     </main>
   );

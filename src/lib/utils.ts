@@ -15,3 +15,12 @@ export function generateSlug(text: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+export function formatCurrency(value: string) {
+  const rawValue = value.replace(/\D/g, "");
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number(rawValue) / 100);
+}
