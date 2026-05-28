@@ -55,6 +55,16 @@ export function FormField({
               placeholder={placeholder}
               autoComplete={autoComplete}
               aria-invalid={fieldState.invalid}
+              className="
+                h-12
+                rounded-xl
+                border-border/60
+                bg-background/80
+                transition-all
+                focus-visible:ring-2
+                focus-visible:ring-primary/30
+                focus-visible:border-primary/40
+              "
               onChange={(e) => {
                 field.onChange(e);
 

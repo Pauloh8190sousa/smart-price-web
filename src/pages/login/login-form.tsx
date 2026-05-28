@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/form/form";
 import { FormField } from "@/components/form/form-field";
 import { FormSubmit } from "@/components/form/form-submit";
+
 import { saveToken } from "@/lib/auth";
 
 export function LoginForm() {
@@ -57,29 +58,30 @@ export function LoginForm() {
   return (
     <Card
       className="
-    flex
-    min-h-[400px]
-    w-full
-    max-w-md
-    flex-col
-    justify-center
-    border-border/50
-    bg-card/80
-    shadow-xl
-    backdrop-blur
-  "
+        w-full
+        max-w-lg
+        rounded-3xl
+        border-border/50
+        bg-background/80
+        shadow-[0_20px_80px_rgba(0,0,0,0.12)]
+        backdrop-blur-xl
+        animate-in fade-in zoom-in-95 duration-500
+      "
     >
-      <CardHeader className="space-y-2 pb-2">
-        <CardTitle className="text-3xl font-bold tracking-tight">
-          Entrar
-        </CardTitle>
+      <CardHeader className="space-y-4 px-6 pt-8 pb-6 sm:px-8 sm:pt-10">
+        <div className="space-y-2">
+          <CardTitle className="text-4xl font-bold tracking-tight text-foreground">
+            Entrar
+          </CardTitle>
 
-        <p className="text-sm text-muted-foreground">
-          Faça login para acessar sua conta
-        </p>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            Faça login para acessar sua conta e acompanhar os preços
+            monitorados.
+          </p>
+        </div>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col justify-center">
+      <CardContent className="px-6 pb-6 pt-2 sm:px-8 sm:pb-8">
         <Form form={form} onSubmit={handleLogin}>
           <div className="space-y-6">
             <FormField
@@ -98,7 +100,9 @@ export function LoginForm() {
               placeholder="Digite sua senha"
             />
 
-            <FormSubmit>Entrar</FormSubmit>
+            <div className="pt-2">
+              <FormSubmit>Entrar</FormSubmit>
+            </div>
           </div>
         </Form>
       </CardContent>
