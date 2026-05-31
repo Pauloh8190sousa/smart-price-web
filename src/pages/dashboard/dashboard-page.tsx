@@ -1,4 +1,12 @@
-import { LogOut, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import {
+  LogOut,
+  Package,
+  Pencil,
+  Plus,
+  Search,
+  Store,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -110,13 +118,24 @@ export function DashboardPage() {
                 />
               </div>
 
-              <Button
-                className="shrink-0 cursor-pointer"
-                onClick={() => navigate("/products/create")}
-              >
-                <Plus className="size-4" />
-                Adicionar produto
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/stores")}
+                  className="cursor-pointer"
+                >
+                  <Store className="size-4" />
+                  Gerenciar Lojas
+                </Button>
+
+                <Button
+                  onClick={() => navigate("/products/create")}
+                  className="cursor-pointer"
+                >
+                  <Plus className="size-4" />
+                  Adicionar Produto
+                </Button>
+              </div>
             </div>
 
             <p className="text-xs text-muted-foreground pl-2">

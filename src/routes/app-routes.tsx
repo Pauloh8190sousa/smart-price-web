@@ -6,6 +6,9 @@ import { LoginPage } from "@/pages/login/login-page";
 import { CreateProductPricePage } from "@/pages/product-price/create/create-product-price-page";
 import { CreateProductPage } from "@/pages/product/create/create-product-page";
 import { ProductPage } from "@/pages/product/product-page";
+import { CreateStorePage } from "@/pages/store/create/create-store-page";
+import { StorePage } from "@/pages/store/store-page";
+import { StoresPage } from "@/pages/store/stores-page";
 import { PrivateRoute } from "./private-route";
 
 const router = createBrowserRouter([
@@ -44,6 +47,30 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <CreateProductPricePage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/stores/create",
+    element: (
+      <PrivateRoute>
+        <CreateStorePage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/stores/:id",
+    element: (
+      <PrivateRoute>
+        <StorePage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/stores",
+    element: (
+      <PrivateRoute>
+        <StoresPage />
       </PrivateRoute>
     ),
   },

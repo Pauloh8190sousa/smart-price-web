@@ -12,4 +12,5 @@ export interface ProductPrice {
   productName: string;
   storeId: string;
   storeName: string;
+  productSlug: string;
 }
