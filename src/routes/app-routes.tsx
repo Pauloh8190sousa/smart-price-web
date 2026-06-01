@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { LoginPage } from "@/pages/login/login-page";
 
+import { CreatePriceAlertPage } from "@/pages/price-alert/create/create-price-alert-page";
+import { PriceAlertsPage } from "@/pages/price-alert/price-alerts-page";
 import { CreateProductPricePage } from "@/pages/product-price/create/create-product-price-page";
 import { CreateProductPage } from "@/pages/product/create/create-product-page";
 import { ProductPage } from "@/pages/product/product-page";
@@ -71,6 +73,22 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <StoresPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/products/:slug/alerts/create",
+    element: (
+      <PrivateRoute>
+        <CreatePriceAlertPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/alerts",
+    element: (
+      <PrivateRoute>
+        <PriceAlertsPage />
       </PrivateRoute>
     ),
   },

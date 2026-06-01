@@ -14,7 +14,7 @@ import { Form } from "@/components/form/form";
 import { FormField } from "@/components/form/form-field";
 import { FormSubmit } from "@/components/form/form-submit";
 
-import { saveToken } from "@/lib/auth";
+import { saveAuth } from "@/lib/auth";
 
 export function LoginForm() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export function LoginForm() {
     try {
       const response = await login(data);
 
-      saveToken(response.token);
+      saveAuth(response);
 
       toast.success("Login realizado com sucesso", {
         description: `Bem-vindo, ${response.user.name}!`,

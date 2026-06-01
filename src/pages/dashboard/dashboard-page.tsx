@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import { removeToken } from "@/lib/auth";
+import { logout } from "@/lib/auth";
 import { getProducts } from "@/services/product/get-products";
 import type { Product } from "@/types/product";
 
@@ -45,7 +45,7 @@ export function DashboardPage() {
   }, []);
 
   function handleLogout() {
-    removeToken();
+    logout();
 
     toast.success("Logout realizado com sucesso");
 
@@ -126,6 +126,14 @@ export function DashboardPage() {
                 >
                   <Store className="size-4" />
                   Gerenciar Lojas
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => navigate("/alerts")}
+                >
+                  Alertas
                 </Button>
 
                 <Button

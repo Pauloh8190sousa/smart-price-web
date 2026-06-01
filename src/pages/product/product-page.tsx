@@ -167,6 +167,15 @@ export function ProductPage() {
             >
               Adicionar preço
             </Button>
+
+            <Button
+              className="flex-1 cursor-pointer sm:flex-none"
+              onClick={() =>
+                navigate(`/products/${product.slug}/alerts/create`)
+              }
+            >
+              Criar alerta
+            </Button>
           </div>
         </div>
 
