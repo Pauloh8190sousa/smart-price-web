@@ -1,4 +1,6 @@
 import {
+  Bell,
+  Heart,
   LogOut,
   Package,
   Pencil,
@@ -133,7 +135,17 @@ export function DashboardPage() {
                   className="cursor-pointer"
                   onClick={() => navigate("/alerts")}
                 >
+                  <Bell className="size-4" />
                   Alertas
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => navigate("/favorites")}
+                >
+                  <Heart className="size-4" />
+                  Favoritos
                 </Button>
 
                 <Button

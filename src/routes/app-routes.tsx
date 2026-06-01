@@ -5,6 +5,7 @@ import { LoginPage } from "@/pages/login/login-page";
 
 import { CreatePriceAlertPage } from "@/pages/price-alert/create/create-price-alert-page";
 import { PriceAlertsPage } from "@/pages/price-alert/price-alerts-page";
+import { FavoritesPage } from "@/pages/product-favorite/favorites-page";
 import { CreateProductPricePage } from "@/pages/product-price/create/create-product-price-page";
 import { CreateProductPage } from "@/pages/product/create/create-product-page";
 import { ProductPage } from "@/pages/product/product-page";
@@ -89,6 +90,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <PriceAlertsPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/favorites",
+    element: (
+      <PrivateRoute>
+        <FavoritesPage />
       </PrivateRoute>
     ),
   },

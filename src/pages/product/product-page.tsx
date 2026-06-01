@@ -1,6 +1,9 @@
 import {
   ArrowLeft,
+  Bell,
   Calendar,
+  DollarSign,
+  Heart,
   Pencil,
   Store,
   Tag,
@@ -25,6 +28,10 @@ import type { ProductPriceStats } from "@/types/product-price-stats";
 import { getProductPriceHistory } from "@/services/product/get-product-price-history";
 import { getProductPrices } from "@/services/product/get-product-prices";
 
+import { getUser } from "@/lib/auth";
+import { checkFavorite } from "@/services/product/check-favorite";
+import { createFavorite } from "@/services/product/create-favorite";
+import { deleteFavorite } from "@/services/product/delete-favorite";
 import { getProductPriceStats } from "@/services/product/get-product-price-stats";
 import type { Product } from "@/types/product";
 
@@ -34,6 +41,8 @@ export function ProductPage() {
   const [prices, setPrices] = useState<ProductPrice[]>([]);
   const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
   const [stats, setStats] = useState<ProductPriceStats | null>(null);
+  const [favorited, setFavorited] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -52,15 +61,27 @@ export function ProductPage() {
 
         setProduct(data);
 
-        const [pricesData, historyData, statsData] = await Promise.all([
-          getProductPrices(data.id),
-          getProductPriceHistory(data.id),
-          getProductPriceStats(data.id),
-        ]);
+        const user = getUser();
+
+        const [pricesData, historyData, statsData, favoriteData] =
+          await Promise.all([
+            getProductPrices(data.id),
+            getProductPriceHistory(data.id),
+            getProductPriceStats(data.id),
+            user
+              ? checkFavorite(user.id, data.id)
+              : Promise.resolve({
+                  favorited: false,
+                  favoriteId: null,
+                }),
+          ]);
 
         setPrices(pricesData);
         setPriceHistory(historyData);
         setStats(statsData);
+
+        setFavorited(favoriteData.favorited);
+        setFavoriteId(favoriteData.favoriteId);
       } catch {
         toast.error("Erro ao carregar produto");
 
@@ -72,6 +93,40 @@ export function ProductPage() {
 
     loadProduct();
   }, [slug, navigate]);
+
+  async function handleFavorite() {
+    try {
+      const user = getUser();
+
+      if (!user || !product) {
+        return;
+      }
+
+      if (favorited && favoriteId) {
+        await deleteFavorite(favoriteId);
+
+        setFavorited(false);
+        setFavoriteId(null);
+
+        toast.success("Produto removido dos favoritos");
+        return;
+      }
+
+      const data = {
+        userId: user.id,
+        productId: product.id,
+      };
+
+      const favorite = await createFavorite(data);
+
+      setFavorited(true);
+      setFavoriteId(favorite.id);
+
+      toast.success("Produto favoritado");
+    } catch {
+      toast.error("Erro ao atualizar favorito");
+    }
+  }
 
   if (isLoading) {
     return (
@@ -165,6 +220,7 @@ export function ProductPage() {
                 navigate(`/products/${product.slug}/prices/create`)
               }
             >
+              <DollarSign className="size-4" />
               Adicionar preço
             </Button>
 
@@ -174,7 +230,18 @@ export function ProductPage() {
                 navigate(`/products/${product.slug}/alerts/create`)
               }
             >
+              <Bell className="size-4" />
               Criar alerta
+            </Button>
+
+            <Button
+              variant={favorited ? "default" : "outline"}
+              className="flex-1 cursor-pointer sm:flex-none"
+              onClick={handleFavorite}
+            >
+              <Heart className={`size-4 ${favorited ? "fill-current" : ""}`} />
+
+              {favorited ? "Favoritado" : "Favoritar"}
             </Button>
           </div>
         </div>
