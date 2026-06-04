@@ -9,6 +9,7 @@ import { FavoritesPage } from "@/pages/product-favorite/favorites-page";
 import { CreateProductPricePage } from "@/pages/product-price/create/create-product-price-page";
 import { CreateProductPage } from "@/pages/product/create/create-product-page";
 import { ProductPage } from "@/pages/product/product-page";
+import { RegisterPage } from "@/pages/register/create/register-page";
 import { CreateStorePage } from "@/pages/store/create/create-store-page";
 import { StorePage } from "@/pages/store/store-page";
 import { StoresPage } from "@/pages/store/stores-page";
@@ -19,7 +20,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <LoginPage />,
   },
-
+  {
+    path: "/register",
+    element: <RegisterPage />,
+  },
   {
     path: "/dashboard",
     element: (

@@ -3,10 +3,11 @@ import { Navigate } from "react-router-dom";
 import { getToken } from "@/lib/auth";
 
 import logoWeb from "@/assets/logoWeb.png";
-import { BellRing, Search, Store } from "lucide-react";
-import { LoginForm } from "./login-form";
 
-export function LoginPage() {
+import { Bell, ShoppingCart, TrendingUp } from "lucide-react";
+import { RegisterForm } from "./register-form";
+
+export function RegisterPage() {
   const token = getToken();
 
   if (token) {
@@ -26,7 +27,6 @@ export function LoginPage() {
           bg-card/90
           shadow-[0_20px_80px_rgba(0,0,0,0.12)]
           backdrop-blur
-          transition-all duration-300
         "
       >
         <div className="hidden flex-1 flex-col justify-center bg-muted/40 p-12 lg:flex">
@@ -44,12 +44,12 @@ export function LoginPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">
-                  Encontre os melhores preços da web
+                  Crie sua conta gratuitamente
                 </h2>
 
                 <p className="mt-3 text-muted-foreground">
-                  Monitore produtos, compare ofertas e acompanhe preços
-                  automaticamente em múltiplas lojas online.
+                  Monitore produtos, receba alertas e acompanhe a evolução dos
+                  preços em tempo real.
                 </p>
               </div>
 
@@ -69,16 +69,16 @@ export function LoginPage() {
                     fade-in
                     slide-in-from-bottom-2
                     duration-500
-                  "
+                    "
                 >
-                  <div className="mb-2 flex items-center gap-2">
-                    <Search className="size-5 text-primary" />
+                  <div className="flex items-center gap-3">
+                    <Bell className="size-5 text-primary" />
 
-                    <p className="font-medium">Busca automática</p>
+                    <p className="font-medium">Alertas automáticos</p>
                   </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    Encontre os menores preços disponíveis em tempo real.
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Seja avisado quando um produto atingir o preço desejado.
                   </p>
                 </div>
 
@@ -97,16 +97,16 @@ export function LoginPage() {
                     fade-in
                     slide-in-from-bottom-2
                     duration-700
-                  "
+                    "
                 >
-                  <div className="mb-2 flex items-center gap-2">
-                    <BellRing className="size-5 text-primary" />
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="size-5 text-primary" />
 
-                    <p className="font-medium">Monitoramento inteligente</p>
+                    <p className="font-medium">Histórico de preços</p>
                   </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    Acompanhe variações e ofertas de produtos automaticamente.
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Visualize a evolução dos preços ao longo do tempo.
                   </p>
                 </div>
 
@@ -125,16 +125,16 @@ export function LoginPage() {
                     fade-in
                     slide-in-from-bottom-2
                     duration-900
-                  "
+                    "
                 >
-                  <div className="mb-2 flex items-center gap-2">
-                    <Store className="size-5 text-primary" />
+                  <div className="flex items-center gap-3">
+                    <ShoppingCart className="size-5 text-primary" />
 
-                    <p className="font-medium">Comparação entre lojas</p>
+                    <p className="font-medium">Comparação inteligente</p>
                   </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    Compare preços entre diferentes marketplaces e e-commerces.
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Compare ofertas entre diversas lojas em um único lugar.
                   </p>
                 </div>
               </div>
@@ -143,7 +143,7 @@ export function LoginPage() {
         </div>
 
         <div className="flex flex-1 items-center justify-center p-8 sm:p-10 lg:p-16">
-          <LoginForm />
+          <RegisterForm />
         </div>
       </div>
     </main>

@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { Lock, Mail, User, UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { login } from "@/services/auth/login";
+import { register } from "@/services/auth/register";
 
-import { Lock, Mail } from "lucide-react";
-import { loginSchema, type LoginSchema } from "./login-schema";
+import { registerSchema, type RegisterSchema } from "./register-schema";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -15,37 +15,36 @@ import { Form } from "@/components/form/form";
 import { FormField } from "@/components/form/form-field";
 import { FormSubmit } from "@/components/form/form-submit";
 
-import { saveAuth } from "@/lib/auth";
-
-export function LoginForm() {
+export function RegisterForm() {
   const navigate = useNavigate();
 
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     mode: "onChange",
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  async function handleLogin(data: LoginSchema) {
+  async function handleRegister(data: RegisterSchema) {
     try {
-      const response = await login(data);
+      const { confirmPassword, ...request } = data;
 
-      saveAuth(response);
+      const user = await register(request);
 
-      toast.success("Login realizado com sucesso", {
-        description: `Bem-vindo, ${response.user.name}!`,
+      toast.success("Conta criada com sucesso", {
+        description: `Bem-vindo, ${user.name}!`,
       });
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message ?? "Erro ao realizar login";
+        const message = error.response?.data?.message ?? "Erro ao criar conta";
 
-        toast.error("Falha no login", {
+        toast.error("Falha no cadastro", {
           description: message,
         });
 
@@ -59,37 +58,47 @@ export function LoginForm() {
   return (
     <Card
       className="
-        w-full
-        max-w-lg
-        rounded-3xl
-        border-border/50
-        bg-background/80
-        shadow-[0_20px_80px_rgba(0,0,0,0.12)]
-        backdrop-blur-xl
-        animate-in fade-in zoom-in-95 duration-500
-      "
+    w-full
+    max-w-lg
+    rounded-3xl
+    border-border/50
+    bg-background/80
+    shadow-[0_20px_80px_rgba(0,0,0,0.12)]
+    backdrop-blur-xl
+    animate-in
+    fade-in
+    zoom-in-95
+    duration-500
+  "
     >
       <CardHeader className="space-y-4 px-6 pt-8 pb-6 sm:px-8 sm:pt-10">
         <div className="space-y-2">
           <CardTitle className="text-4xl font-bold tracking-tight text-foreground">
-            Entrar
+            Criar conta
           </CardTitle>
 
           <p className="text-base leading-relaxed text-muted-foreground">
-            Faça login para acessar sua conta e acompanhar os preços
-            monitorados.
+            Cadastre-se para começar a monitorar preços e receber alertas.
           </p>
         </div>
       </CardHeader>
 
       <CardContent className="px-6 pb-6 pt-2 sm:px-8 sm:pb-8">
-        <Form form={form} onSubmit={handleLogin}>
+        <Form form={form} onSubmit={handleRegister}>
           <div className="space-y-6">
+            <FormField
+              name="name"
+              label="Nome"
+              autoComplete="name"
+              placeholder="Digite seu nome"
+              icon={User}
+            />
+
             <FormField
               name="email"
               type="email"
-              autoComplete="username"
               label="Email"
+              autoComplete="email"
               placeholder="Digite seu email"
               icon={Mail}
             />
@@ -97,21 +106,33 @@ export function LoginForm() {
             <FormField
               name="password"
               type="password"
-              autoComplete="current-password"
               label="Senha"
+              autoComplete="new-password"
               placeholder="Digite sua senha"
               icon={Lock}
             />
 
+            <FormField
+              name="confirmPassword"
+              type="password"
+              label="Confirmar senha"
+              autoComplete="new-password"
+              placeholder="Digite sua senha novamente"
+              icon={Lock}
+            />
+
             <div className="pt-2">
-              <FormSubmit>Entrar</FormSubmit>
+              <FormSubmit>
+                <UserPlus className="size-4" />
+                Criar conta
+              </FormSubmit>
             </div>
 
             <div className="text-center text-sm text-muted-foreground">
-              Não possui uma conta?{" "}
+              Já possui uma conta?{" "}
               <button
                 type="button"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/")}
                 className="
       font-medium
       text-primary
@@ -119,7 +140,7 @@ export function LoginForm() {
       cursor-pointer
     "
               >
-                Criar conta
+                Entrar
               </button>
             </div>
           </div>
