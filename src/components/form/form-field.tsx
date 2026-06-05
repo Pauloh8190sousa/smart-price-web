@@ -48,6 +48,10 @@ export function FormField({
               onChange={(e) => {
                 field.onChange(e);
 
+                if (form.formState.errors[name]?.type === "server") {
+                  form.clearErrors(name);
+                }
+
                 onChange?.(e);
               }}
             />
@@ -86,6 +90,11 @@ export function FormField({
                   .join(" ")}
                 onChange={(e) => {
                   field.onChange(e);
+
+                  if (form.formState.errors[name]?.type === "server") {
+                    form.clearErrors(name);
+                  }
+
                   onChange?.(e);
                 }}
               />

@@ -42,11 +42,40 @@ export function LoginForm() {
       navigate("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message ?? "Erro ao realizar login";
+        const data = error.response?.data;
+        const status = error.response?.status;
 
-        toast.error("Falha no login", {
-          description: message,
+        if (data?.fields?.length) {
+          data.fields.forEach(
+            (field: { field: keyof LoginSchema; message: string }) => {
+              form.setError(field.field, {
+                type: "server",
+                message: field.message,
+              });
+            },
+          );
+
+          return;
+        }
+
+        if (status === 401) {
+          toast.error("Credenciais inválidas", {
+            description: data?.message,
+          });
+
+          return;
+        }
+
+        if (status === 403) {
+          toast.error("Conta indisponível", {
+            description: data?.message,
+          });
+
+          return;
+        }
+
+        toast.error("Erro", {
+          description: data?.message ?? "Erro ao realizar login",
         });
 
         return;

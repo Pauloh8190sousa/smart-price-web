@@ -42,10 +42,33 @@ export function RegisterForm() {
       navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message ?? "Erro ao criar conta";
+        const data = error.response?.data;
+        const status = error.response?.status;
+
+        if (data?.fields?.length) {
+          data.fields.forEach(
+            (field: { field: keyof RegisterSchema; message: string }) => {
+              form.setError(field.field, {
+                type: "server",
+                message: field.message,
+              });
+            },
+          );
+
+          return;
+        }
+
+        if (status === 409) {
+          form.setError("email", {
+            type: "server",
+            message: data?.message,
+          });
+
+          return;
+        }
 
         toast.error("Falha no cadastro", {
-          description: message,
+          description: data?.message ?? "Erro ao criar conta",
         });
 
         return;
