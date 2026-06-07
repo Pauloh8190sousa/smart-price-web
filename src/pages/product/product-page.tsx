@@ -28,6 +28,8 @@ import type { ProductPriceStats } from "@/types/product-price-stats";
 import { getProductPriceHistory } from "@/services/product/get-product-price-history";
 import { getProductPrices } from "@/services/product/get-product-prices";
 
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/lib/auth";
 import { checkFavorite } from "@/services/product/check-favorite";
 import { createFavorite } from "@/services/product/create-favorite";
@@ -47,6 +49,16 @@ export function ProductPage() {
   const navigate = useNavigate();
 
   const { slug } = useParams();
+
+  const cardHoverClass = `
+  border-border/50
+  bg-card
+  shadow-sm
+  transition-all duration-200
+  hover:-translate-y-1
+  hover:border-primary/30
+  hover:shadow-lg
+`;
 
   useEffect(() => {
     async function loadProduct() {
@@ -132,19 +144,19 @@ export function ProductPage() {
     return (
       <main className="min-h-screen bg-background p-6">
         <div className="mx-auto max-w-7xl">
-          <div className="h-5 w-48 animate-pulse rounded bg-muted/70" />
+          <Skeleton className="h-5 w-48" />
 
-          <div className="mt-6 h-10 w-40 animate-pulse rounded-xl bg-muted/70" />
+          <Skeleton className="mt-6 h-10 w-40 rounded-xl" />
 
           <div className="mt-6 grid gap-8 lg:grid-cols-[420px_1fr]">
-            <div className="aspect-square animate-pulse rounded-2xl bg-muted/70" />
+            <Skeleton className="aspect-square rounded-2xl" />
 
             <div className="space-y-4">
-              <div className="h-8 w-72 animate-pulse rounded bg-muted/70" />
+              <Skeleton className="h-8 w-72" />
 
-              <div className="h-4 w-40 animate-pulse rounded bg-muted/70" />
+              <Skeleton className="h-4 w-40" />
 
-              <div className="h-28 w-full animate-pulse rounded-xl bg-muted/70" />
+              <Skeleton className="h-28 w-full rounded-xl" />
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, index) => (
@@ -166,7 +178,7 @@ export function ProductPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-muted/20">
       <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <button
@@ -264,24 +276,22 @@ export function ProductPage() {
           </Card>
 
           <div className="flex flex-col gap-6">
-            <Card className="border-border/50 bg-card/80 backdrop-blur">
+            <Card
+              className="
+                border-primary/20
+                bg-card
+                shadow-md
+              "
+            >
               <CardContent className="flex h-full flex-col gap-6 p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium ${
-                          product.active
-                            ? "bg-green-500/10 text-green-600"
-                            : "bg-red-500/10 text-red-600"
-                        }`}
-                      >
+                      <Badge variant={product.active ? "success" : "inactive"}>
                         {product.active ? "Ativo" : "Inativo"}
-                      </span>
+                      </Badge>
 
-                      <span className="rounded-md bg-muted px-2 py-1 text-xs">
-                        {product.category}
-                      </span>
+                      <Badge variant="secondary">{product.category}</Badge>
                     </div>
 
                     <h1 className="text-3xl font-bold tracking-tight">
@@ -295,27 +305,33 @@ export function ProductPage() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-border/50 bg-muted/30 p-4">
-                    <div className="mb-2 flex items-center gap-2 text-sm font-medium">
-                      <Tag className="size-4" />
-                      Slug
-                    </div>
+                  <Card className={cardHoverClass}>
+                    <CardContent className="p-4">
+                      <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+                        <Tag className="size-4" />
+                        Slug
+                      </div>
 
-                    <p className="text-sm text-muted-foreground break-all">
-                      {product.slug}
-                    </p>
-                  </div>
+                      <p className="text-sm text-muted-foreground break-all">
+                        {product.slug}
+                      </p>
+                    </CardContent>
+                  </Card>
 
-                  <div className="rounded-xl border border-border/50 bg-muted/30 p-4">
-                    <div className="mb-2 flex items-center gap-2 text-sm font-medium">
-                      <Calendar className="size-4" />
-                      Criado em
-                    </div>
+                  <Card className={cardHoverClass}>
+                    <CardContent className="p-4">
+                      <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+                        <Calendar className="size-4" />
+                        Criado em
+                      </div>
 
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(product.createdAt).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(product.createdAt).toLocaleDateString(
+                          "pt-BR",
+                        )}
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
 
                 <div className="space-y-3">
@@ -327,31 +343,36 @@ export function ProductPage() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <div className="rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg">
-                    <p className="text-sm text-muted-foreground">Marca</p>
+                  <Card className={cardHoverClass}>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">Marca</p>
+                      <p className="mt-1 font-medium">{product.brand || "-"}</p>
+                    </CardContent>
+                  </Card>
 
-                    <p className="mt-1 font-medium">{product.brand || "-"}</p>
-                  </div>
+                  <Card className={cardHoverClass}>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">Modelo</p>
 
-                  <div className="rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg">
-                    <p className="text-sm text-muted-foreground">Modelo</p>
+                      <p className="mt-1 font-medium">{product.model || "-"}</p>
+                    </CardContent>
+                  </Card>
 
-                    <p className="mt-1 font-medium">{product.model || "-"}</p>
-                  </div>
+                  <Card className={cardHoverClass}>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">Categoria</p>
 
-                  <div className="rounded-xl border border-border/50 p-4 transition-shadow hover:shadow-lg">
-                    <p className="text-sm text-muted-foreground">Categoria</p>
-
-                    <p className="mt-1 font-medium">
-                      {product.category || "-"}
-                    </p>
-                  </div>
+                      <p className="mt-1 font-medium">
+                        {product.category || "-"}
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
               </CardContent>
             </Card>
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <Card className="border-border/50 bg-card/80 backdrop-blur transition-shadow hover:shadow-lg">
+              <Card className={cardHoverClass}>
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
@@ -370,7 +391,7 @@ export function ProductPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/50 bg-card/80 backdrop-blur transition-shadow hover:shadow-lg">
+              <Card className={cardHoverClass}>
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
@@ -389,7 +410,7 @@ export function ProductPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/50 bg-card/80 backdrop-blur transition-shadow hover:shadow-lg">
+              <Card className={cardHoverClass}>
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Média</span>
@@ -406,7 +427,7 @@ export function ProductPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/50 bg-card/80 backdrop-blur transition-shadow hover:shadow-lg">
+              <Card className={cardHoverClass}>
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Lojas</span>
@@ -438,22 +459,55 @@ export function ProductPage() {
                     <div
                       key={price.id}
                       className="
-        flex flex-col gap-4 rounded-xl border border-border/50
-        p-4 transition-shadow hover:shadow-lg
-        sm:flex-row sm:items-center sm:justify-between
-      "
+    flex flex-col gap-4 rounded-xl border border-border/50 bg-card
+    p-4 transition-all duration-200
+    hover:-translate-y-1
+    hover:border-primary/30
+    hover:shadow-lg
+    sm:flex-row sm:items-center sm:justify-between
+  "
                     >
-                      <div>
-                        <p className="font-medium">{price.storeName}</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          {price.storeLogoUrl ? (
+                            <img
+                              src={price.storeLogoUrl}
+                              alt={price.storeName}
+                              className="h-8 max-w-[100px] object-contain"
+                            />
+                          ) : (
+                            <Store className="size-5 text-muted-foreground" />
+                          )}
 
-                        <p className="text-sm text-muted-foreground">
-                          {price.available ? "Disponível" : "Indisponível"}
-                        </p>
+                          <div className="flex flex-col">
+                            <p className="font-medium">{price.storeName}</p>
+                          </div>
+
+                          <Badge
+                            className="mt-1 w-fit"
+                            variant={price.available ? "success" : "inactive"}
+                          >
+                            {price.available ? "Disponível" : "Indisponível"}
+                          </Badge>
+                        </div>
 
                         {price.installmentQuantity > 0 && (
                           <p className="text-sm text-muted-foreground">
-                            {price.installmentQuantity}x de{" "}
+                            Em até {price.installmentQuantity}x de{" "}
                             {Number(price.installmentValue).toLocaleString(
+                              "pt-BR",
+                              {
+                                style: "currency",
+                                currency: "BRL",
+                              },
+                            )}
+                          </p>
+                        )}
+
+                        {price.shippingPrice > 0 && (
+                          <p className="text-xs text-muted-foreground">
+                            Frete:{" "}
+                            {Number(price.shippingPrice).toLocaleString(
                               "pt-BR",
                               {
                                 style: "currency",
@@ -464,8 +518,8 @@ export function ProductPage() {
                         )}
                       </div>
 
-                      <div className="text-left sm:text-right">
-                        <p className="text-2xl font-bold text-green-600">
+                      <div className="flex flex-col items-start gap-2 sm:items-end">
+                        <p className="text-3xl font-bold text-green-600">
                           {Number(price.price).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
@@ -474,9 +528,13 @@ export function ProductPage() {
 
                         <Button
                           size="sm"
-                          className="mt-2 cursor-pointer"
+                          className="cursor-pointer"
                           onClick={() =>
-                            window.open(price.productUrl, "_blank")
+                            window.open(
+                              price.productUrl,
+                              "_blank",
+                              "noopener,noreferrer",
+                            )
                           }
                         >
                           Ver oferta
@@ -503,9 +561,13 @@ export function ProductPage() {
                     <div
                       key={history.id}
                       className="
-            flex items-center justify-between rounded-xl
-            border border-border/50 p-4
-          "
+                        flex items-center justify-between rounded-xl
+                        border border-border/50 bg-card
+                        p-4 transition-all duration-200
+                        hover:-translate-y-1
+                        hover:border-primary/30
+                        hover:shadow-lg
+                      "
                     >
                       <div>
                         <p className="font-medium">{history.storeName}</p>

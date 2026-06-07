@@ -1,7 +1,7 @@
 // pages/product/create/create-product-form.tsx
 
 import axios from "axios";
-import { ArrowLeft, PackagePlus } from "lucide-react";
+import { PackagePlus } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Form } from "@/components/form/form";
@@ -18,8 +17,8 @@ import { FormField } from "@/components/form/form-field";
 import { FormSubmit } from "@/components/form/form-submit";
 
 import {
-    createProductSchema,
-    type CreateProductSchema,
+  createProductSchema,
+  type CreateProductSchema,
 } from "@/pages/product/create/create-product-schema";
 
 import { createProduct } from "@/services/product/create-product";
@@ -42,6 +41,8 @@ export function CreateProductForm() {
       description: "",
     },
   });
+
+  const imageUrl = form.watch("imageUrl");
 
   async function handleCreateProduct(data: CreateProductSchema) {
     try {
@@ -75,28 +76,14 @@ export function CreateProductForm() {
         backdrop-blur
       "
     >
-      <CardHeader className="space-y-2">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <CardTitle className="text-3xl font-bold tracking-tight">
-              Novo produto
-            </CardTitle>
+      <CardHeader>
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Novo produto
+        </CardTitle>
 
-            <p className="text-sm text-muted-foreground">
-              Cadastre um novo produto para monitoramento
-            </p>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="cursor-pointer"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ArrowLeft className="size-4" />
-            Voltar
-          </Button>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Cadastre um novo produto para monitoramento
+        </p>
       </CardHeader>
 
       <CardContent>
@@ -118,11 +105,7 @@ export function CreateProductForm() {
                 }}
               />
 
-              <FormField
-                name="slug"
-                label="Slug"
-                placeholder="slug-do-produto"
-              />
+              <FormField name="slug" label="Slug" disabled />
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -147,6 +130,19 @@ export function CreateProductForm() {
               placeholder="https://..."
             />
 
+            {imageUrl && (
+              <div className="flex justify-center rounded-xl border border-border/50 bg-muted/20 p-4">
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  className="h-40 object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+            )}
+
             <FormField
               name="description"
               label="Descrição"
@@ -154,11 +150,13 @@ export function CreateProductForm() {
               textarea
             />
 
-            <div className="flex justify-end">
-              <FormSubmit>
-                <PackagePlus className="size-4" />
-                Criar produto
-              </FormSubmit>
+            <div className="mt-8 border-t pt-6">
+              <div className="flex flex-col gap-3">
+                <FormSubmit>
+                  <PackagePlus className="size-4" />
+                  Criar produto
+                </FormSubmit>
+              </div>
             </div>
           </div>
         </Form>

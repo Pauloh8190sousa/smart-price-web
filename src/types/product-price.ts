@@ -13,4 +13,5 @@ export interface ProductPrice {
   storeId: string;
   storeName: string;
   productSlug: string;
+  storeLogoUrl: string;
 }

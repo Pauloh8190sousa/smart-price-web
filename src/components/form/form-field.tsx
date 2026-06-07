@@ -14,6 +14,7 @@ type Props = {
   autoComplete?: string;
   textarea?: boolean;
   icon?: LucideIcon;
+  disabled?: boolean;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
@@ -27,6 +28,7 @@ export function FormField({
   autoComplete,
   textarea = false,
   icon: Icon,
+  disabled = false,
   onChange,
 }: Props) {
   const form = useFormContext();
@@ -45,6 +47,7 @@ export function FormField({
               id={name}
               placeholder={placeholder}
               aria-invalid={fieldState.invalid}
+              disabled={disabled}
               onChange={(e) => {
                 field.onChange(e);
 
@@ -75,6 +78,7 @@ export function FormField({
                 placeholder={placeholder}
                 autoComplete={autoComplete}
                 aria-invalid={fieldState.invalid}
+                disabled={disabled}
                 className={[
                   "h-12",
                   "rounded-xl",

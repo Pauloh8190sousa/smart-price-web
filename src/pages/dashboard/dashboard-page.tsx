@@ -15,9 +15,11 @@ import { toast } from "sonner";
 
 import logoWeb from "@/assets/logoWeb.png";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { logout } from "@/lib/auth";
 import { getProducts } from "@/services/product/get-products";
@@ -120,7 +122,7 @@ export function DashboardPage() {
                 />
               </div>
 
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:flex">
                 <Button
                   variant="outline"
                   onClick={() => navigate("/stores")}
@@ -190,14 +192,14 @@ export function DashboardPage() {
               <Card key={index}>
                 <CardContent className="p-4">
                   <div className="flex gap-4">
-                    <div className="h-20 w-20 animate-pulse rounded-lg bg-muted" />
+                    <Skeleton className="h-20 w-20 rounded-lg" />
 
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 w-40 animate-pulse rounded bg-muted" />
+                      <Skeleton className="h-4 w-40" />
 
-                      <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+                      <Skeleton className="h-3 w-24" />
 
-                      <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+                      <Skeleton className="h-3 w-20" />
                     </div>
                   </div>
                 </CardContent>
@@ -210,6 +212,7 @@ export function DashboardPage() {
               <Card
                 key={product.id}
                 role="button"
+                aria-label={`Abrir produto ${product.name}`}
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -244,15 +247,11 @@ export function DashboardPage() {
                           {product.name}
                         </h3>
 
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-medium ${
-                            product.active
-                              ? "bg-green-500/10 text-green-600"
-                              : "bg-red-500/10 text-red-600"
-                          }`}
+                        <Badge
+                          variant={product.active ? "success" : "inactive"}
                         >
                           {product.active ? "Ativo" : "Inativo"}
-                        </span>
+                        </Badge>
                       </div>
 
                       <p className="line-clamp-1 text-sm text-muted-foreground">
@@ -264,9 +263,7 @@ export function DashboardPage() {
                       </p>
 
                       <div className="pt-2">
-                        <span className="rounded-md bg-muted px-2 py-1 text-xs">
-                          {product.category}
-                        </span>
+                        <Badge variant="secondary">{product.category}</Badge>
                       </div>
                     </div>
                   </div>
