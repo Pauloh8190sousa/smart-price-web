@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { ArrowLeft, DollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -13,8 +13,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -142,43 +140,38 @@ export function CreateProductPriceForm() {
         backdrop-blur
       "
     >
-      <CardHeader className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <CardTitle className="text-3xl font-bold tracking-tight">
-              Novo preço
-            </CardTitle>
+      <CardHeader>
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Novo preço
+        </CardTitle>
 
-            <p className="text-sm text-muted-foreground">
-              Adicione um novo preço monitorado
-            </p>
-          </div>
+        <p className="text-sm text-muted-foreground">
+          Adicione um novo preço monitorado
+        </p>
+      </CardHeader>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="cursor-pointer"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="size-4" />
-            Voltar
-          </Button>
-        </div>
-
+      <CardContent className="space-y-6">
         {product && (
           <div
             className="
-              flex items-center gap-4 rounded-2xl
-              border border-border/50 bg-muted/30 p-4
+              mb-8
+              flex items-center gap-4
+              rounded-xl
+              border border-border/50
+              bg-card
+              p-4
+              shadow-sm
             "
           >
             <img
               src={product.imageUrl || "/placeholder-product.png"}
               alt={product.name}
               className="
-  h-20 w-20 rounded-xl
-  object-contain bg-muted/30 p-2
-"
+                h-20 w-20 rounded-xl
+                object-contain
+                bg-muted/20
+                p-2
+              "
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = "/placeholder-product.png";
@@ -198,9 +191,7 @@ export function CreateProductPriceForm() {
             </div>
           </div>
         )}
-      </CardHeader>
 
-      <CardContent>
         <Form form={form} onSubmit={handleCreatePrice}>
           <div className="grid gap-6">
             <div className="grid gap-6 md:grid-cols-2">
@@ -215,8 +206,8 @@ export function CreateProductPriceForm() {
                 }}
               />
 
-              <Field>
-                <FieldLabel>Loja</FieldLabel>
+              <Field data-invalid={!!form.formState.errors.storeId}>
+                <FieldLabel htmlFor="storeId">Loja</FieldLabel>
 
                 <Select
                   value={form.watch("storeId")}
@@ -226,7 +217,10 @@ export function CreateProductPriceForm() {
                     })
                   }
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger
+                    id="storeId"
+                    aria-invalid={!!form.formState.errors.storeId}
+                  >
                     <SelectValue placeholder="Selecione uma loja" />
                   </SelectTrigger>
 
@@ -300,10 +294,14 @@ export function CreateProductPriceForm() {
 
             <Field className="flex items-center justify-between rounded-xl border border-border/50 p-4">
               <div>
-                <FieldLabel>Disponível</FieldLabel>
+                <FieldLabel>
+                  {form.watch("available") ? "Disponível" : "Indisponível"}
+                </FieldLabel>
 
                 <p className="text-sm text-muted-foreground">
-                  Produto disponível para compra
+                  {form.watch("available")
+                    ? "Produto disponível para compra"
+                    : "Produto indisponível para compra"}
                 </p>
               </div>
 
@@ -312,10 +310,11 @@ export function CreateProductPriceForm() {
                 onCheckedChange={(checked) =>
                   form.setValue("available", checked)
                 }
+                className="cursor-pointer"
               />
             </Field>
 
-            <div className="flex justify-end">
+            <div className="mt-8 border-t pt-6">
               <FormSubmit>
                 <DollarSign className="size-4" />
                 Cadastrar preço

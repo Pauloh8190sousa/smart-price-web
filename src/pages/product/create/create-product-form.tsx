@@ -151,12 +151,10 @@ export function CreateProductForm() {
             />
 
             <div className="mt-8 border-t pt-6">
-              <div className="flex flex-col gap-3">
-                <FormSubmit>
-                  <PackagePlus className="size-4" />
-                  Criar produto
-                </FormSubmit>
-              </div>
+              <FormSubmit>
+                <PackagePlus className="size-4" />
+                Criar produto
+              </FormSubmit>
             </div>
           </div>
         </Form>
