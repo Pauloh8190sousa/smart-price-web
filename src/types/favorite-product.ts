@@ -8,4 +8,8 @@ export interface FavoriteProduct {
   productId: string;
 
   productSlug: string;
+
+  productImageUrl: string;
+
+  productName: string;
 }

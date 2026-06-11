@@ -29,6 +29,16 @@ export function DashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const cardHoverClass = `
+  border-border/50
+  bg-card
+  shadow-sm
+  transition-all duration-200
+  hover:-translate-y-1
+  hover:border-primary/30
+  hover:shadow-lg
+  cursor-pointer
+`;
 
   const navigate = useNavigate();
 
@@ -74,100 +84,66 @@ export function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-border bg-card/80 shadow-sm backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <img
-              src={logoWeb}
-              alt="Smart Price"
-              className="h-14 w-auto object-contain"
-            />
-          </div>
-
+      <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
+        <div className="flex items-center justify-between">
           <Button
             variant="outline"
+            className="cursor-pointer"
             onClick={handleLogout}
-            aria-label="Sair da conta"
-            className="transition-colors cursor-pointer"
           >
             <LogOut className="size-4" />
             Sair
           </Button>
+
+          <img
+            src={logoWeb}
+            alt="Smart Price"
+            className="h-16 w-auto object-contain"
+          />
         </div>
-      </header>
 
-      <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">Produtos</h2>
-
+            <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
             <p className="text-muted-foreground">
               Visualize e gerencie os produtos cadastrados
             </p>
           </div>
 
-          <div className="flex w-full flex-col gap-2 sm:w-auto">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="relative sm:w-80">
-                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Button
+            onClick={() => navigate("/products/create")}
+            className="cursor-pointer"
+          >
+            <Plus className="size-4" />
+            Novo Produto
+          </Button>
+        </div>
 
-                <Input
-                  type="search"
-                  autoComplete="off"
-                  aria-label="Buscar produto"
-                  placeholder="Buscar produto..."
-                  className="pl-9"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-md">
+            <Search
+              className="
+        absolute left-3 top-1/2
+        size-4 -translate-y-1/2
+        text-muted-foreground
+      "
+            />
 
-              <div className="grid grid-cols-2 gap-2 sm:flex">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate("/stores")}
-                  className="cursor-pointer"
-                >
-                  <Store className="size-4" />
-                  Gerenciar Lojas
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  onClick={() => navigate("/alerts")}
-                >
-                  <Bell className="size-4" />
-                  Alertas
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  onClick={() => navigate("/favorites")}
-                >
-                  <Heart className="size-4" />
-                  Favoritos
-                </Button>
-
-                <Button
-                  onClick={() => navigate("/products/create")}
-                  className="cursor-pointer"
-                >
-                  <Plus className="size-4" />
-                  Adicionar Produto
-                </Button>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground pl-2">
-              {filteredProducts.length} produto(s) encontrado(s)
-            </p>
+            <Input
+              placeholder="Buscar produto..."
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
+
+          <p className="text-sm text-muted-foreground">
+            Exibindo {filteredProducts.length} de {products.length} produtos
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Card>
+          <Card className="border-border/50 bg-card shadow-sm">
             <CardContent className="flex items-center gap-4 p-6">
               <div className="rounded-xl bg-primary/10 p-3 text-primary">
                 <Package className="size-5" />
@@ -178,9 +154,46 @@ export function DashboardPage() {
                   Total de produtos
                 </p>
 
-                <h3 className="text-2xl font-bold">
-                  {filteredProducts.length}
-                </h3>
+                <h3 className="text-2xl font-bold">{products.length}</h3>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className={cardHoverClass} onClick={() => navigate("/stores")}>
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="rounded-xl bg-primary/10 p-3 text-primary">
+                <Store className="size-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Lojas</p>
+                <p className="text-sm text-muted-foreground">Gerenciar lojas</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className={cardHoverClass} onClick={() => navigate("/alerts")}>
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="rounded-xl bg-primary/10 p-3 text-primary">
+                <Bell className="size-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Alertas</p>
+                <p className="text-sm text-muted-foreground">Monitorar</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className={cardHoverClass}
+            onClick={() => navigate("/favorites")}
+          >
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="rounded-xl bg-primary/10 p-3 text-primary">
+                <Heart className="size-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Favoritos</p>
+                <p className="text-sm text-muted-foreground">Produtos</p>
               </div>
             </CardContent>
           </Card>
@@ -220,28 +233,19 @@ export function DashboardPage() {
                   }
                 }}
                 onClick={() => navigate(`/products/${product.slug}`)}
-                className="
-                  cursor-pointer
-                  transition-all
-                  duration-200
-                  hover:-translate-y-1
-                  hover:border-primary/40
-                  hover:shadow-lg
-                "
+                className={cardHoverClass}
               >
                 <CardContent className="flex h-full flex-col p-4">
                   <div className="flex gap-4">
-                    <img
-                      src={product.imageUrl || "/placeholder-product.png"}
-                      alt={product.name}
-                      className="h-20 w-20 shrink-0 rounded-lg object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = "/placeholder-product.png";
-                      }}
-                    />
+                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-lg bg-muted/20 p-2">
+                      <img
+                        src={product.imageUrl || "/placeholder-product.png"}
+                        alt={product.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
 
-                    <div className="flex-1 space-y-1">
+                    <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="line-clamp-1 font-semibold">
                           {product.name}

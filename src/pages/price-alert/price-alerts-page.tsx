@@ -122,8 +122,8 @@ export function PriceAlertsPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1 max-w-md">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-md">
             <Search
               className="
         absolute left-3 top-1/2
@@ -138,18 +138,30 @@ export function PriceAlertsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-
-            <p className="text-sm text-muted-foreground">
-              Exibindo {filteredAlerts.length} de {alerts.length} alertas
-            </p>
           </div>
+
+          <p className="text-sm text-muted-foreground">
+            Exibindo {filteredAlerts.length} de {alerts.length} alertas
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
           <Card
             className={cn(
-              "cursor-pointer transition-all",
-              statusFilter === "all" && "border-primary-500",
+              `
+      cursor-pointer
+      transition-all duration-200
+      hover:-translate-y-1
+      hover:shadow-lg
+    `,
+              statusFilter === "all" &&
+                `
+      border-primary
+      shadow-lg
+      ring-2 ring-primary/20
+      -translate-y-1
+      bg-primary/5
+    `,
             )}
             onClick={() => setStatusFilter("all")}
           >
@@ -168,8 +180,20 @@ export function PriceAlertsPage() {
 
           <Card
             className={cn(
-              "cursor-pointer transition-all",
-              statusFilter === "active" && "border-green-500",
+              `
+      cursor-pointer
+      transition-all duration-200
+      hover:-translate-y-1
+      hover:shadow-lg
+    `,
+              statusFilter === "active" &&
+                `
+      border-green-500
+      shadow-lg
+      ring-2 ring-green-500/20
+      -translate-y-1
+      bg-green-500/5
+    `,
             )}
             onClick={() => setStatusFilter("active")}
           >
@@ -188,8 +212,20 @@ export function PriceAlertsPage() {
 
           <Card
             className={cn(
-              "cursor-pointer transition-all",
-              statusFilter === "inactive" && "border-red-500",
+              `
+      cursor-pointer
+      transition-all duration-200
+      hover:-translate-y-1
+      hover:shadow-lg
+    `,
+              statusFilter === "inactive" &&
+                `
+      border-red-500
+      shadow-lg
+      ring-2 ring-red-500/20
+      -translate-y-1
+      bg-red-500/5
+    `,
             )}
             onClick={() => setStatusFilter("inactive")}
           >
@@ -231,7 +267,7 @@ export function PriceAlertsPage() {
                   <div className="flex items-start justify-between">
                     <h3 className="font-semibold">{alert.productName}</h3>
 
-                    <Badge variant={alert.active ? "success" : "secondary"}>
+                    <Badge variant={alert.active ? "success" : "destructive"}>
                       {alert.active ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>

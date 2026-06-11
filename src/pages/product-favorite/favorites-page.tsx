@@ -17,6 +17,7 @@ import { getUser } from "@/lib/auth";
 import { deleteFavorite } from "@/services/product/delete-favorite";
 import { getFavorites } from "@/services/product/get-favorites";
 
+import logoWeb from "@/assets/logoWeb.png";
 import type { FavoriteProduct } from "@/types/favorite-product";
 
 export function FavoritesPage() {
@@ -25,6 +26,17 @@ export function FavoritesPage() {
   const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const cardHoverClass = `
+  border-border/50
+  bg-card
+  shadow-sm
+  transition-all duration-200
+  hover:-translate-y-1
+  hover:border-primary/30
+  hover:shadow-lg
+  cursor-pointer
+`;
 
   async function loadFavorites() {
     try {
@@ -47,8 +59,10 @@ export function FavoritesPage() {
   const filteredFavorites = useMemo(() => {
     const value = search.trim().toLowerCase();
 
-    return favorites.filter((favorite) =>
-      favorite.productSlug.toLowerCase().includes(value),
+    return favorites.filter(
+      (favorite) =>
+        favorite.productName.toLowerCase().includes(value) ||
+        favorite.productSlug.toLowerCase().includes(value),
     );
   }, [favorites, search]);
 
@@ -70,50 +84,64 @@ export function FavoritesPage() {
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate("/dashboard")}>
+          <Button
+            variant="outline"
+            className="cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
             <ArrowLeft className="size-4" />
             Voltar
           </Button>
+
+          <img
+            src={logoWeb}
+            alt="Smart Price"
+            className="h-16 w-auto object-contain"
+          />
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Favoritos</h1>
+          <h1 className="text-3xl font-bold">Favoritos</h1>
 
           <p className="text-muted-foreground">Produtos salvos por você</p>
         </div>
 
-        <div className="relative max-w-md">
-          <Search
-            className="
-              absolute left-3 top-1/2
-              size-4 -translate-y-1/2
-              text-muted-foreground
-            "
-          />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-md">
+            <Search
+              className="
+        absolute left-3 top-1/2
+        size-4 -translate-y-1/2
+        text-muted-foreground
+      "
+            />
 
-          <Input
-            placeholder="Buscar produto..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+            <Input
+              placeholder="Buscar produto..."
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            Exibindo {filteredFavorites.length} de {favorites.length} favoritos
+          </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Card>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card className="transition-all hover:-translate-y-1 hover:shadow-lg">
             <CardContent className="flex items-center gap-4 p-6">
               <div className="rounded-xl bg-red-500/10 p-3 text-red-500">
-                <Heart className="size-5" />
+                <Heart className="size-5 fill-current" />
               </div>
 
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Total de favoritos
+                  Produtos favoritados
                 </p>
 
-                <h3 className="text-2xl font-bold">
-                  {filteredFavorites.length}
-                </h3>
+                <h3 className="text-3xl font-bold">{favorites.length}</h3>
               </div>
             </CardContent>
           </Card>
@@ -132,40 +160,55 @@ export function FavoritesPage() {
             {filteredFavorites.map((favorite) => (
               <Card
                 key={favorite.id}
-                className="
-                  transition-all
-                  duration-200
-                  hover:-translate-y-1
-                  hover:border-primary/40
-                  hover:shadow-lg
-                "
+                className={cardHoverClass}
+                onClick={() => navigate(`/products/${favorite.productSlug}`)}
               >
                 <CardContent className="space-y-4 p-5">
+                  <div className="flex justify-center">
+                    <img
+                      src={
+                        favorite.productImageUrl || "/placeholder-product.png"
+                      }
+                      alt={favorite.productName}
+                      className="h-40 w-full rounded-lg object-contain bg-muted/20 p-2"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder-product.png";
+                      }}
+                    />
+                  </div>
+
                   <div>
-                    <h3 className="font-semibold">{favorite.productSlug}</h3>
+                    <div className="flex items-start justify-between">
+                      <h3 className="line-clamp-2 font-semibold">
+                        {favorite.productName}
+                      </h3>
+
+                      <Heart className="size-4 fill-current text-red-500" />
+                    </div>
 
                     <p className="text-sm text-muted-foreground">
-                      Produto favoritado
+                      {favorite.productSlug}
                     </p>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="pt-2">
                     <Button
-                      className="flex-1"
-                      onClick={() =>
-                        navigate(`/products/${favorite.productSlug}`)
-                      }
-                    >
-                      Ver Produto
-                    </Button>
-
-                    <Button
-                      variant="destructive"
-                      className="flex-1"
-                      onClick={() => handleDelete(favorite.id)}
+                      variant="outline"
+                      className="
+                        w-full
+                        border-red-500
+                        text-red-500
+                        hover:bg-red-500
+                        hover:text-white
+                        cursor-pointer
+                      "
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(favorite.id);
+                      }}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      Remover dos favoritos
                     </Button>
                   </div>
                 </CardContent>

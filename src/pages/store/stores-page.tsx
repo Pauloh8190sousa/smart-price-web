@@ -1,12 +1,6 @@
 // pages/store/stores-page.tsx
 
-import {
-    ArrowLeft,
-    Globe,
-    Plus,
-    Search,
-    Store as StoreIcon,
-} from "lucide-react";
+import { ArrowLeft, Plus, Search, Store as StoreIcon } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -22,12 +16,25 @@ import { getStores } from "@/services/store/get-stores";
 
 import type { Store } from "@/types/store";
 
+import logoWeb from "@/assets/logoWeb.png";
+import { Badge } from "@/components/ui/badge";
+
 export function StoresPage() {
   const navigate = useNavigate();
 
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const cardHoverClass = `
+  border-border/50
+  bg-card
+  shadow-sm
+  transition-all duration-200
+  hover:-translate-y-1
+  hover:border-primary/30
+  hover:shadow-lg
+  cursor-pointer
+`;
 
   useEffect(() => {
     async function loadStores() {
@@ -59,36 +66,65 @@ export function StoresPage() {
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate("/dashboard")}>
+          <Button
+            variant="outline"
+            className="cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
             <ArrowLeft className="size-4" />
             Voltar
           </Button>
 
-          <Button onClick={() => navigate("/stores/create")}>
+          <img
+            src={logoWeb}
+            alt="Smart Price"
+            className="h-16 w-auto object-contain"
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Lojas</h1>
+
+            <p className="text-muted-foreground">
+              Gerencie as lojas monitoradas
+            </p>
+          </div>
+
+          <Button
+            className="cursor-pointer"
+            onClick={() => navigate("/stores/create")}
+          >
             <Plus className="size-4" />
             Nova Loja
           </Button>
         </div>
 
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Lojas</h1>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-md">
+            <Search
+              className="
+        absolute left-3 top-1/2
+        size-4 -translate-y-1/2
+        text-muted-foreground
+      "
+            />
 
-          <p className="text-muted-foreground">Gerencie as lojas monitoradas</p>
+            <Input
+              placeholder="Buscar loja..."
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            Exibindo {filteredStores.length} de {stores.length} lojas
+          </p>
         </div>
 
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-          <Input
-            placeholder="Buscar loja..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Card>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card className="transition-all hover:-translate-y-1 hover:shadow-lg">
             <CardContent className="flex items-center gap-4 p-6">
               <div className="rounded-xl bg-primary/10 p-3 text-primary">
                 <StoreIcon className="size-5" />
@@ -97,7 +133,7 @@ export function StoresPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Total de lojas</p>
 
-                <h3 className="text-2xl font-bold">{filteredStores.length}</h3>
+                <h3 className="text-3xl font-bold">{stores.length}</h3>
               </div>
             </CardContent>
           </Card>
@@ -118,57 +154,38 @@ export function StoresPage() {
             {filteredStores.map((store) => (
               <Card
                 key={store.id}
-                role="button"
-                tabIndex={0}
+                className={cardHoverClass}
                 onClick={() => navigate(`/stores/${store.id}`)}
-                className="
-                  cursor-pointer
-                  transition-all
-                  duration-200
-                  hover:-translate-y-1
-                  hover:border-primary/40
-                  hover:shadow-lg
-                "
               >
-                <CardContent className="p-5">
-                  <div className="flex gap-4">
-                    <div
-                      className="
-                        flex h-16 w-16 shrink-0 items-center
-                        justify-center rounded-xl bg-muted/40
-                      "
-                    >
-                      {store.logoUrl ? (
+                <CardContent className="space-y-4 p-5">
+                  <div className="flex justify-center">
+                    {store.logoUrl ? (
+                      <div className="flex h-28 items-center justify-center rounded-lg bg-muted/20 p-2">
                         <img
                           src={store.logoUrl}
                           alt={store.name}
-                          className="h-12 w-12 object-contain"
+                          className="max-h-24 w-full object-contain"
                         />
-                      ) : (
-                        <StoreIcon className="size-8 text-muted-foreground" />
-                      )}
+                      </div>
+                    ) : (
+                      <StoreIcon className="size-14 text-muted-foreground" />
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <h3 className="line-clamp-2 font-semibold">
+                        {store.name}
+                      </h3>
+
+                      <Badge variant={store.active ? "success" : "destructive"}>
+                        {store.active ? "Ativa" : "Inativa"}
+                      </Badge>
                     </div>
 
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold">{store.name}</h3>
-
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-medium ${
-                            store.active
-                              ? "bg-green-500/10 text-green-600"
-                              : "bg-red-500/10 text-red-600"
-                          }`}
-                        >
-                          {store.active ? "Ativa" : "Inativa"}
-                        </span>
-                      </div>
-
-                      <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-                        <Globe className="size-4" />
-                        <span className="line-clamp-1">{store.websiteUrl}</span>
-                      </div>
-                    </div>
+                    <p className="line-clamp-1 text-sm text-muted-foreground">
+                      {store.websiteUrl}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

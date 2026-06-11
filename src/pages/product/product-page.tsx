@@ -36,6 +36,15 @@ import { createFavorite } from "@/services/product/create-favorite";
 import { deleteFavorite } from "@/services/product/delete-favorite";
 import { getProductPriceStats } from "@/services/product/get-product-price-stats";
 import type { Product } from "@/types/product";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -139,6 +148,17 @@ export function ProductPage() {
       toast.error("Erro ao atualizar favorito");
     }
   }
+
+  const chartData = priceHistory
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(a.changedAt).getTime() - new Date(b.changedAt).getTime(),
+    )
+    .map((item) => ({
+      date: new Date(item.changedAt).toLocaleDateString("pt-BR"),
+      price: item.newPrice,
+    }));
 
   if (isLoading) {
     return (
@@ -554,6 +574,45 @@ export function ProductPage() {
                   <p className="text-sm text-muted-foreground">
                     Últimas alterações de preço encontradas
                   </p>
+                </div>
+
+                <div className="mb-8 h-[320px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+
+                      <YAxis
+                        tickFormatter={(value) =>
+                          `R$ ${Number(value).toFixed(0)}`
+                        }
+                      />
+
+                      <Tooltip
+                        formatter={(value) =>
+                          typeof value === "number"
+                            ? [
+                                value.toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }),
+                                "Preço",
+                              ]
+                            : ["-", "Preço"]
+                        }
+                      />
+
+                      <Line
+                        type="monotone"
+                        dataKey="price"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={3}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
 
                 <div className="space-y-3">
