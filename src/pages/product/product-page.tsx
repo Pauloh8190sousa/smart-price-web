@@ -157,21 +157,10 @@ export function ProductPage() {
         new Date(a.changedAt).getTime() - new Date(b.changedAt).getTime(),
     );
 
-  const chartData =
-    sortedHistory.length > 0
-      ? [
-          {
-            timestamp:
-              new Date(sortedHistory[0].changedAt).getTime() - 60 * 1000,
-            price: sortedHistory[0].oldPrice,
-          },
-
-          ...sortedHistory.map((item) => ({
-            timestamp: new Date(item.changedAt).getTime(),
-            price: item.newPrice,
-          })),
-        ]
-      : [];
+  const chartData = sortedHistory.map((item) => ({
+    timestamp: new Date(item.changedAt).getTime(),
+    price: item.newPrice,
+  }));
 
   const firstPrice = chartData[0]?.price;
   const lastPrice = chartData[chartData.length - 1]?.price;
@@ -182,9 +171,7 @@ export function ProductPage() {
       : 0;
 
   const priceDifference =
-    firstPrice != null && lastPrice != null
-      ? Math.abs(lastPrice - firstPrice)
-      : 0;
+    firstPrice != null && lastPrice != null ? lastPrice - firstPrice : 0;
 
   const chartColor = variation <= 0 ? "#16a34a" : "#dc2626";
 
@@ -604,12 +591,14 @@ export function ProductPage() {
 
                     <Badge variant={variation <= 0 ? "success" : "destructive"}>
                       {variation > 0
-                        ? "↑ Subiu "
+                        ? "↑ Subiu"
                         : variation < 0
                           ? "↓ Caiu"
-                          : "→ Estável"}{" "}
-                      {Math.abs(variation).toFixed(2)}%{" • "}
-                      {formatCurrency(priceDifference.toFixed(2))}
+                          : "→ Estável"}
+
+                      {" • "}
+
+                      {formatCurrency(Math.abs(priceDifference).toFixed(2))}
                     </Badge>
                   </div>
 
