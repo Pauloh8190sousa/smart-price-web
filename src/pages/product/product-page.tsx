@@ -31,6 +31,7 @@ import { getProductPrices } from "@/services/product/get-product-prices";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/lib/auth";
+import { formatCurrency } from "@/lib/utils";
 import { checkFavorite } from "@/services/product/check-favorite";
 import { createFavorite } from "@/services/product/create-favorite";
 import { deleteFavorite } from "@/services/product/delete-favorite";
@@ -149,16 +150,43 @@ export function ProductPage() {
     }
   }
 
-  const chartData = priceHistory
+  const sortedHistory = priceHistory
     .slice()
     .sort(
       (a, b) =>
         new Date(a.changedAt).getTime() - new Date(b.changedAt).getTime(),
-    )
-    .map((item) => ({
-      date: new Date(item.changedAt).toLocaleDateString("pt-BR"),
-      price: item.newPrice,
-    }));
+    );
+
+  const chartData =
+    sortedHistory.length > 0
+      ? [
+          {
+            timestamp:
+              new Date(sortedHistory[0].changedAt).getTime() - 60 * 1000,
+            price: sortedHistory[0].oldPrice,
+          },
+
+          ...sortedHistory.map((item) => ({
+            timestamp: new Date(item.changedAt).getTime(),
+            price: item.newPrice,
+          })),
+        ]
+      : [];
+
+  const firstPrice = chartData[0]?.price;
+  const lastPrice = chartData[chartData.length - 1]?.price;
+
+  const variation =
+    firstPrice != null && lastPrice != null && firstPrice > 0
+      ? ((lastPrice - firstPrice) / firstPrice) * 100
+      : 0;
+
+  const priceDifference =
+    firstPrice != null && lastPrice != null
+      ? Math.abs(lastPrice - firstPrice)
+      : 0;
+
+  const chartColor = variation <= 0 ? "#16a34a" : "#dc2626";
 
   if (isLoading) {
     return (
@@ -569,7 +597,21 @@ export function ProductPage() {
             <Card className="border-border/50 bg-card/80 backdrop-blur">
               <CardContent className="p-6">
                 <div className="mb-6">
-                  <h2 className="text-xl font-semibold">Histórico de preços</h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-semibold">
+                      Histórico de preços
+                    </h2>
+
+                    <Badge variant={variation <= 0 ? "success" : "destructive"}>
+                      {variation > 0
+                        ? "↑ Subiu "
+                        : variation < 0
+                          ? "↓ Caiu"
+                          : "→ Estável"}{" "}
+                      {Math.abs(variation).toFixed(2)}%{" • "}
+                      {formatCurrency(priceDifference.toFixed(2))}
+                    </Badge>
+                  </div>
 
                   <p className="text-sm text-muted-foreground">
                     Últimas alterações de preço encontradas
@@ -577,82 +619,79 @@ export function ProductPage() {
                 </div>
 
                 <div className="mb-8 h-[320px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-
-                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-
-                      <YAxis
-                        tickFormatter={(value) =>
-                          `R$ ${Number(value).toFixed(0)}`
-                        }
-                      />
-
-                      <Tooltip
-                        formatter={(value) =>
-                          typeof value === "number"
-                            ? [
-                                value.toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                }),
-                                "Preço",
-                              ]
-                            : ["-", "Preço"]
-                        }
-                      />
-
-                      <Line
-                        type="monotone"
-                        dataKey="price"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth={3}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="space-y-3">
-                  {priceHistory.map((history) => (
-                    <div
-                      key={history.id}
-                      className="
-                        flex items-center justify-between rounded-xl
-                        border border-border/50 bg-card
-                        p-4 transition-all duration-200
-                        hover:-translate-y-1
-                        hover:border-primary/30
-                        hover:shadow-lg
-                      "
-                    >
-                      <div>
-                        <p className="font-medium">{history.storeName}</p>
-
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(history.changedAt).toLocaleString("pt-BR")}
-                        </p>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground line-through">
-                          {Number(history.oldPrice).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </p>
-
-                        <p className="font-bold text-green-600">
-                          {Number(history.newPrice).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </p>
-                      </div>
+                  {chartData.length === 0 ? (
+                    <div className="flex h-[320px] items-center justify-center text-muted-foreground">
+                      Nenhum histórico encontrado
                     </div>
-                  ))}
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={chartData}
+                        margin={{
+                          top: 10,
+                          right: 30,
+                          left: 30,
+                          bottom: 10,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="0" opacity={0.1} />
+
+                        <XAxis
+                          dataKey="timestamp"
+                          type="number"
+                          scale="time"
+                          domain={["auto", "auto"]}
+                          tickFormatter={(value) => {
+                            const date = new Date(value);
+
+                            return chartData.length <= 20
+                              ? date.toLocaleString("pt-BR", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              : date.toLocaleDateString("pt-BR");
+                          }}
+                        />
+
+                        <YAxis
+                          domain={[
+                            (dataMin: number) => dataMin - dataMin * 0.05,
+                            (dataMax: number) => dataMax + dataMax * 0.05,
+                          ]}
+                          tickFormatter={(value) =>
+                            value.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          }
+                          padding={{
+                            bottom: 20,
+                          }}
+                        />
+
+                        <Tooltip
+                          labelFormatter={(label) =>
+                            `Data: ${new Date(label).toLocaleString("pt-BR")}`
+                          }
+                          formatter={(value) => [
+                            formatCurrency(Number(value).toString()),
+                            "Preço",
+                          ]}
+                        />
+
+                        <Line
+                          type="stepAfter"
+                          dataKey="price"
+                          stroke={chartColor}
+                          strokeWidth={3}
+                          dot={{ r: 5 }}
+                          activeDot={{ r: 7 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </CardContent>
             </Card>
