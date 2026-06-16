@@ -1,19 +1,7 @@
-import {
-  Bell,
-  Heart,
-  LogOut,
-  Package,
-  Pencil,
-  Plus,
-  Search,
-  Store,
-  Trash2,
-} from "lucide-react";
+import { LogOut, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-import logoWeb from "@/assets/logoWeb.png";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +9,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { logout } from "@/lib/auth";
 import { getProducts } from "@/services/product/get-products";
 import type { Product } from "@/types/product";
@@ -83,254 +77,201 @@ export function DashboardPage() {
   }, [products, search]);
 
   return (
-    <main className="min-h-screen bg-background">
-      <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            className="cursor-pointer"
-            onClick={handleLogout}
+    <SidebarProvider>
+      <AppSidebar />
+
+      <SidebarInset>
+        <main className="min-h-screen bg-background">
+          <section
+            className="
+            mx-auto
+            w-full
+            max-w-screen-2xl
+            flex flex-col
+            gap-6
+            px-4
+            sm:px-6
+            lg:px-8
+            py-6
+            "
           >
-            <LogOut className="size-4" />
-            Sair
-          </Button>
+            <div className="flex items-center justify-between border-b pb-4 sticky top-0 bg-background z-10">
+              <SidebarTrigger className="h-10 w-10 border rounded-md" />
 
-          <img
-            src={logoWeb}
-            alt="Smart Price"
-            className="h-16 w-auto object-contain"
-          />
-        </div>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="size-4" />
+                Sair
+              </Button>
+            </div>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
-            <p className="text-muted-foreground">
-              Visualize e gerencie os produtos cadastrados
-            </p>
-          </div>
-
-          <Button
-            onClick={() => navigate("/products/create")}
-            className="cursor-pointer"
-          >
-            <Plus className="size-4" />
-            Novo Produto
-          </Button>
-        </div>
-
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full max-w-md">
-            <Search
-              className="
-        absolute left-3 top-1/2
-        size-4 -translate-y-1/2
-        text-muted-foreground
-      "
-            />
-
-            <Input
-              placeholder="Buscar produto..."
-              className="pl-9"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          <p className="text-sm text-muted-foreground">
-            Exibindo {filteredProducts.length} de {products.length} produtos
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Card className="border-border/50 bg-card shadow-sm">
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Package className="size-5" />
-              </div>
-
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">
-                  Total de produtos
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  Produtos
+                </h1>
+
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Visualize e gerencie os produtos cadastrados
                 </p>
-
-                <h3 className="text-2xl font-bold">{products.length}</h3>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className={cardHoverClass} onClick={() => navigate("/stores")}>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Store className="size-5 text-primary" />
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => navigate("/products/create")}
+                  className="cursor-pointer w-full sm:w-auto"
+                >
+                  <Plus className="size-4" />
+                  Novo Produto
+                </Button>
               </div>
-              <div>
-                <p className="font-medium">Lojas</p>
-                <p className="text-sm text-muted-foreground">Gerenciar lojas</p>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative w-full sm:max-w-md">
+                <Search
+                  className="
+              absolute left-3 top-1/2
+              size-4 -translate-y-1/2
+              text-muted-foreground
+            "
+                />
+
+                <Input
+                  placeholder="Buscar produto..."
+                  className="pl-9"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className={cardHoverClass} onClick={() => navigate("/alerts")}>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Bell className="size-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium">Alertas</p>
-                <p className="text-sm text-muted-foreground">Monitorar</p>
-              </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Exibindo {filteredProducts.length} de {products.length} produtos
+              </p>
+            </div>
 
-          <Card
-            className={cardHoverClass}
-            onClick={() => navigate("/favorites")}
-          >
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Heart className="size-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium">Favoritos</p>
-                <p className="text-sm text-muted-foreground">Produtos</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {!isLoading && filteredProducts.length === 0 && (
+              <Card>
+                <CardContent className="flex min-h-[300px] items-center justify-center">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <Package className="size-10 text-muted-foreground" />
 
-        {isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index}>
-                <CardContent className="p-4">
-                  <div className="flex gap-4">
-                    <Skeleton className="h-20 w-20 rounded-lg" />
+                    <div>
+                      <p className="font-medium">
+                        {search
+                          ? "Nenhum produto encontrado"
+                          : "Nenhum produto cadastrado"}
+                      </p>
 
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-40" />
-
-                      <Skeleton className="h-3 w-24" />
-
-                      <Skeleton className="h-3 w-20" />
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        {search
+                          ? "Tente buscar outro termo."
+                          : "Os produtos aparecerão aqui."}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <Card
-                key={product.id}
-                role="button"
-                aria-label={`Abrir produto ${product.name}`}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    navigate(`/products/${product.slug}`);
-                  }
-                }}
-                onClick={() => navigate(`/products/${product.slug}`)}
-                className={cardHoverClass}
-              >
-                <CardContent className="flex h-full flex-col p-4">
-                  <div className="flex gap-4">
-                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-lg bg-muted/20 p-2">
-                      <img
-                        src={product.imageUrl || "/placeholder-product.png"}
-                        alt={product.name}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
+            )}
 
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="line-clamp-1 font-semibold">
-                          {product.name}
-                        </h3>
+            {isLoading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-4">
+                      <div className="flex gap-4">
+                        <Skeleton className="h-20 w-20 rounded-lg" />
 
-                        <Badge
-                          variant={product.active ? "success" : "inactive"}
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-40" />
+                          <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredProducts.map((product) => (
+                  <Card
+                    key={product.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate(`/products/${product.slug}`)}
+                    className={`${cardHoverClass} min-h-[480px]`}
+                  >
+                    <CardContent className="flex h-full flex-col p-4">
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Badge
+                            variant={product.active ? "success" : "inactive"}
+                          >
+                            {product.active ? "Ativo" : "Inativo"}
+                          </Badge>
+
+                          <Badge variant="secondary">{product.category}</Badge>
+                        </div>
+                        <div className="flex h-52 items-center justify-center rounded-lg bg-muted/20 p-4">
+                          <img
+                            src={product.imageUrl || "/placeholder-product.png"}
+                            alt={product.name}
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="line-clamp-2 text-sm sm:text-base font-semibold">
+                              {product.name}
+                            </h3>
+                          </div>
+
+                          <p className="line-clamp-1 text-xs sm:text-sm text-muted-foreground">
+                            {product.brand} • {product.model}
+                          </p>
+
+                          <p className="line-clamp-5 text-xs sm:text-sm text-muted-foreground mb-4">
+                            {product.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-auto flex gap-2 pt-4">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 text-xs sm:text-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toast.info(`Editar ${product.name}`);
+                          }}
                         >
-                          {product.active ? "Ativo" : "Inativo"}
-                        </Badge>
+                          <Pencil className="size-4" />
+                          Editar
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="flex-1 text-xs sm:text-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toast.warning(`Excluir ${product.name}`);
+                          }}
+                        >
+                          <Trash2 className="size-4" />
+                          Excluir
+                        </Button>
                       </div>
-
-                      <p className="line-clamp-1 text-sm text-muted-foreground">
-                        {product.brand} • {product.model}
-                      </p>
-
-                      <p className="line-clamp-2 text-sm text-muted-foreground">
-                        {product.description}
-                      </p>
-
-                      <div className="pt-2">
-                        <Badge variant="secondary">{product.category}</Badge>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto flex gap-2 pt-4">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        toast.info(`Editar ${product.name}`);
-                      }}
-                    >
-                      <Pencil className="size-4" />
-                      Editar
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="flex-1 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        toast.warning(`Excluir ${product.name}`);
-                      }}
-                    >
-                      <Trash2 className="size-4" />
-                      Excluir
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {!isLoading && filteredProducts.length === 0 && (
-          <Card>
-            <CardContent className="flex min-h-[300px] items-center justify-center">
-              <div className="flex flex-col items-center gap-3 text-center">
-                <Package className="size-10 text-muted-foreground" />
-
-                <div>
-                  <p className="font-medium">
-                    {search
-                      ? "Nenhum produto encontrado"
-                      : "Nenhum produto cadastrado"}
-                  </p>
-
-                  <p className="text-sm text-muted-foreground">
-                    {search
-                      ? "Tente buscar outro termo."
-                      : "Os produtos aparecerão aqui."}
-                  </p>
-                </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </section>
-    </main>
+            )}
+          </section>
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
