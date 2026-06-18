@@ -30,6 +30,7 @@ import { getProductPrices } from "@/services/product/get-product-prices";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUser } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
 import { checkFavorite } from "@/services/product/check-favorite";
@@ -55,6 +56,7 @@ export function ProductPage() {
   const [stats, setStats] = useState<ProductPriceStats | null>(null);
   const [favorited, setFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
+  const [activePoint, setActivePoint] = useState<any>(null);
 
   const navigate = useNavigate();
 
@@ -183,7 +185,7 @@ export function ProductPage() {
 
           <Skeleton className="mt-6 h-10 w-40 rounded-xl" />
 
-          <div className="mt-6 grid gap-8 lg:grid-cols-[420px_1fr]">
+          <div className="mt-6 grid gap-8 lg:grid-cols-[360px_1fr]">
             <Skeleton className="aspect-square rounded-2xl" />
 
             <div className="space-y-4">
@@ -215,7 +217,7 @@ export function ProductPage() {
   return (
     <main className="min-h-screen bg-muted/20">
       <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs sm:text-sm overflow-hidden">
           <button
             onClick={() => navigate("/dashboard")}
             className="cursor-pointer transition-colors hover:text-foreground"
@@ -225,7 +227,7 @@ export function ProductPage() {
 
           <span>/</span>
 
-          <span className="text-foreground">{product.name}</span>
+          <span className="text-foreground truncate">{product.name}</span>
         </div>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -238,7 +240,7 @@ export function ProductPage() {
             Voltar
           </Button>
 
-          <div className="flex w-full gap-2 sm:w-auto">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto">
             <Button
               variant="outline"
               className="flex-1 cursor-pointer sm:flex-none"
@@ -283,7 +285,7 @@ export function ProductPage() {
 
             <Button
               variant={favorited ? "default" : "outline"}
-              className="flex-1 cursor-pointer sm:flex-none"
+              className="cursor-pointer col-span-2 sm:col-span-1"
               onClick={handleFavorite}
             >
               <Heart className={`size-4 ${favorited ? "fill-current" : ""}`} />
@@ -293,120 +295,155 @@ export function ProductPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
-          <Card className="self-start overflow-hidden border-border/50 bg-card/70 backdrop-blur">
-            <CardContent className="p-0">
-              <div className="aspect-square bg-muted/30">
-                <img
-                  src={product.imageUrl || "/placeholder-product.png"}
-                  alt={product.name}
-                  className="h-full w-full object-contain p-6"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = "/placeholder-product.png";
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="product" className="w-full">
+          <TabsList className="mb-6 grid w-full grid-cols-3">
+            <TabsTrigger value="product" className="cursor-pointer">
+              Produto
+            </TabsTrigger>
 
-          <div className="flex flex-col gap-6">
-            <Card
-              className="
-                border-primary/20
-                bg-card
-                shadow-md
-              "
-            >
-              <CardContent className="flex h-full flex-col gap-6 p-6">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Badge variant={product.active ? "success" : "inactive"}>
-                        {product.active ? "Ativo" : "Inativo"}
-                      </Badge>
+            <TabsTrigger value="prices" className="cursor-pointer">
+              Preços
+            </TabsTrigger>
 
-                      <Badge variant="secondary">{product.category}</Badge>
+            <TabsTrigger value="history" className="cursor-pointer">
+              Histórico
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="product" className="space-y-6">
+            <div className="grid gap-8 xl:grid-cols-[420px_1fr]">
+              <Card
+                className="
+                    overflow-hidden
+                    border-border/50
+                    bg-card/70
+                    backdrop-blur
+                    w-full
+                    lg:w-auto
+                  "
+              >
+                <CardContent className="p-0">
+                  <div className="aspect-square bg-muted/30">
+                    <img
+                      src={product.imageUrl || "/placeholder-product.png"}
+                      alt={product.name}
+                      className="h-full w-full object-contain p-6"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/placeholder-product.png";
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="
+                    border-primary/20
+                    bg-card
+                    shadow-md
+                  "
+              >
+                <CardContent className="flex h-full flex-col gap-6 p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={product.active ? "success" : "inactive"}
+                        >
+                          {product.active ? "Ativo" : "Inativo"}
+                        </Badge>
+
+                        <Badge variant="secondary">{product.category}</Badge>
+                      </div>
+
+                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                        {product.name}
+                      </h1>
+
+                      <p className="text-muted-foreground">
+                        {product.brand} • {product.model}
+                      </p>
                     </div>
+                  </div>
 
-                    <h1 className="text-3xl font-bold tracking-tight">
-                      {product.name}
-                    </h1>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Card className={cardHoverClass}>
+                      <CardContent className="p-4">
+                        <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+                          <Tag className="size-4" />
+                          Slug
+                        </div>
 
-                    <p className="text-muted-foreground">
-                      {product.brand} • {product.model}
+                        <p className="text-sm text-muted-foreground break-all">
+                          {product.slug}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className={cardHoverClass}>
+                      <CardContent className="p-4">
+                        <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+                          <Calendar className="size-4" />
+                          Criado em
+                        </div>
+
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(product.createdAt).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h2 className="text-lg font-semibold">Descrição</h2>
+
+                    <p className="leading-relaxed text-muted-foreground">
+                      {product.description || "Nenhuma descrição cadastrada."}
                     </p>
                   </div>
-                </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Card className={cardHoverClass}>
-                    <CardContent className="p-4">
-                      <div className="mb-2 flex items-center gap-2 text-sm font-medium">
-                        <Tag className="size-4" />
-                        Slug
-                      </div>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <Card className={cardHoverClass}>
+                      <CardContent className="p-4">
+                        <p className="text-sm text-muted-foreground">Marca</p>
+                        <p className="mt-1 font-medium">
+                          {product.brand || "-"}
+                        </p>
+                      </CardContent>
+                    </Card>
 
-                      <p className="text-sm text-muted-foreground break-all">
-                        {product.slug}
-                      </p>
-                    </CardContent>
-                  </Card>
+                    <Card className={cardHoverClass}>
+                      <CardContent className="p-4">
+                        <p className="text-sm text-muted-foreground">Modelo</p>
 
-                  <Card className={cardHoverClass}>
-                    <CardContent className="p-4">
-                      <div className="mb-2 flex items-center gap-2 text-sm font-medium">
-                        <Calendar className="size-4" />
-                        Criado em
-                      </div>
+                        <p className="mt-1 font-medium">
+                          {product.model || "-"}
+                        </p>
+                      </CardContent>
+                    </Card>
 
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(product.createdAt).toLocaleDateString(
-                          "pt-BR",
-                        )}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                    <Card className={cardHoverClass}>
+                      <CardContent className="p-4">
+                        <p className="text-sm text-muted-foreground">
+                          Categoria
+                        </p>
 
-                <div className="space-y-3">
-                  <h2 className="text-lg font-semibold">Descrição</h2>
+                        <p className="mt-1 font-medium">
+                          {product.category || "-"}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-                  <p className="leading-relaxed text-muted-foreground">
-                    {product.description || "Nenhuma descrição cadastrada."}
-                  </p>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <Card className={cardHoverClass}>
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">Marca</p>
-                      <p className="mt-1 font-medium">{product.brand || "-"}</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className={cardHoverClass}>
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">Modelo</p>
-
-                      <p className="mt-1 font-medium">{product.model || "-"}</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className={cardHoverClass}>
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">Categoria</p>
-
-                      <p className="mt-1 font-medium">
-                        {product.category || "-"}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <TabsContent value="prices" className="space-y-6">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
               <Card className={cardHoverClass}>
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center justify-between">
@@ -417,7 +454,7 @@ export function ProductPage() {
                     <TrendingDown className="size-4 text-green-600" />
                   </div>
 
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">
                     {Number(stats?.lowestPrice || 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
@@ -436,7 +473,7 @@ export function ProductPage() {
                     <TrendingUp className="size-4 text-red-600" />
                   </div>
 
-                  <p className="text-2xl font-bold text-red-600">
+                  <p className="text-xl sm:text-2xl font-bold text-red-600">
                     {Number(stats?.highestPrice || 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
@@ -453,7 +490,7 @@ export function ProductPage() {
                     <Tag className="size-4 text-primary" />
                   </div>
 
-                  <p className="text-2xl font-bold">
+                  <p className="text-xl sm:text-2xl font-bold">
                     {Number(stats?.averagePrice || 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
@@ -470,7 +507,7 @@ export function ProductPage() {
                     <Store className="size-4 text-primary" />
                   </div>
 
-                  <p className="text-2xl font-bold">
+                  <p className="text-xl sm:text-2xl font-bold">
                     {stats?.storesCount || 0}
                   </p>
                 </CardContent>
@@ -494,13 +531,13 @@ export function ProductPage() {
                     <div
                       key={price.id}
                       className="
-    flex flex-col gap-4 rounded-xl border border-border/50 bg-card
-    p-4 transition-all duration-200
-    hover:-translate-y-1
-    hover:border-primary/30
-    hover:shadow-lg
-    sm:flex-row sm:items-center sm:justify-between
-  "
+                          flex flex-col gap-4 rounded-xl border border-border/50 bg-card
+                          p-4 transition-all duration-200
+                          hover:-translate-y-1
+                          hover:border-primary/30
+                          hover:shadow-lg
+                          sm:flex-row sm:items-center sm:justify-between
+                        "
                     >
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
@@ -553,7 +590,15 @@ export function ProductPage() {
                         )}
                       </div>
 
-                      <div className="flex flex-col items-start gap-2 sm:items-end">
+                      <div
+                        className="
+                            flex flex-col
+                            items-start
+                            gap-2
+                            sm:items-end
+                            sm:text-right
+                          "
+                      >
                         <p className="text-3xl font-bold text-green-600">
                           {Number(price.price).toLocaleString("pt-BR", {
                             style: "currency",
@@ -580,11 +625,13 @@ export function ProductPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
+          <TabsContent value="history" className="space-y-6">
             <Card className="border-border/50 bg-card/80 backdrop-blur">
               <CardContent className="p-6">
                 <div className="mb-6">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <h2 className="text-xl font-semibold">
                       Histórico de preços
                     </h2>
@@ -607,7 +654,7 @@ export function ProductPage() {
                   </p>
                 </div>
 
-                <div className="mb-8 h-[320px] w-full">
+                <div className="mb-8 h-[250px] sm:h-[320px] w-full">
                   {chartData.length === 0 ? (
                     <div className="flex h-[320px] items-center justify-center text-muted-foreground">
                       Nenhum histórico encontrado
@@ -661,6 +708,7 @@ export function ProductPage() {
                         />
 
                         <Tooltip
+                          cursor={false}
                           labelFormatter={(label) =>
                             `Data: ${new Date(label).toLocaleString("pt-BR")}`
                           }
@@ -668,6 +716,7 @@ export function ProductPage() {
                             formatCurrency(Number(value).toString()),
                             "Preço",
                           ]}
+                          isAnimationActive={false}
                         />
 
                         <Line
@@ -675,8 +724,12 @@ export function ProductPage() {
                           dataKey="price"
                           stroke={chartColor}
                           strokeWidth={3}
-                          dot={{ r: 5 }}
-                          activeDot={{ r: 7 }}
+                          isAnimationActive={false}
+                          dot={{ r: 4 }}
+                          activeDot={{
+                            r: 10,
+                            strokeWidth: 2,
+                          }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -684,8 +737,8 @@ export function ProductPage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </section>
     </main>
   );

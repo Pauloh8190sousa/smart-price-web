@@ -96,9 +96,13 @@ export function DashboardPage() {
             "
           >
             <div className="flex items-center justify-between border-b pb-4 sticky top-0 bg-background z-10">
-              <SidebarTrigger className="h-10 w-10 border rounded-md" />
+              <SidebarTrigger className="h-10 w-10 border rounded-md cursor-pointer" />
 
-              <Button variant="outline" onClick={handleLogout}>
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={handleLogout}
+              >
                 <LogOut className="size-4" />
                 Sair
               </Button>
