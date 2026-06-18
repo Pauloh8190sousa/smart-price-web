@@ -56,7 +56,6 @@ export function ProductPage() {
   const [stats, setStats] = useState<ProductPriceStats | null>(null);
   const [favorited, setFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
-  const [activePoint, setActivePoint] = useState<any>(null);
 
   const navigate = useNavigate();
 
