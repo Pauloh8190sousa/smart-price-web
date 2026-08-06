@@ -4,7 +4,7 @@ import {
   Bell,
   Store,
   TrendingDown,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -196,17 +196,20 @@ export function CreatePriceAlertPage() {
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Badge variant="success" className="gap-1 font-semibold">
                       <TrendingDown className="size-3" />
-                      Menor: {formatCurrency(String(stats.lowestPrice))}
+                      Menor:{" "}
+                      {formatCurrency(String(stats.lowestPrice.toFixed(2)))}
                     </Badge>
 
                     <Badge variant="secondary" className="gap-1">
                       <BarChart3 className="size-3" />
-                      Média: {formatCurrency(String(stats.averagePrice))}
+                      Média:{" "}
+                      {formatCurrency(String(stats.averagePrice.toFixed(2)))}
                     </Badge>
 
                     <Badge variant="destructive" className="gap-1">
                       <TrendingUp className="size-3" />
-                      Maior: {formatCurrency(String(stats.highestPrice))}
+                      Maior:{" "}
+                      {formatCurrency(String(stats.highestPrice.toFixed(2)))}
                     </Badge>
 
                     <Badge variant="outline" className="gap-1">

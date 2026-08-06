@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 import { toast } from "sonner";
 
-import logoWeb from "@/assets/logoWeb.png";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,7 +19,13 @@ import { getPriceAlerts } from "@/services/product/get-price-alerts";
 import { togglePriceAlert } from "@/services/product/toggle-price-alert";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { PriceAlert } from "@/types/price-alert";
 
 export function PriceAlertsPage() {
@@ -67,9 +71,6 @@ export function PriceAlertsPage() {
     });
   }, [alerts, search, statusFilter]);
 
-  const activeAlerts = filteredAlerts.filter((a) => a.active).length;
-  const inactiveAlerts = filteredAlerts.length - activeAlerts;
-
   async function handleToggle(id: string) {
     try {
       await togglePriceAlert(id);
@@ -97,7 +98,20 @@ export function PriceAlertsPage() {
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex max-w-7xl flex-col gap-6 p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs sm:text-sm overflow-hidden">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="cursor-pointer transition-colors hover:text-foreground"
+          >
+            Dashboard
+          </button>
+
+          <span>/</span>
+
+          <span className="text-foreground truncate">Alertas</span>
+        </div>
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <Button
             variant="outline"
             className="cursor-pointer"
@@ -107,140 +121,71 @@ export function PriceAlertsPage() {
             Voltar
           </Button>
 
-          <img
-            src={logoWeb}
-            alt="Smart Price"
-            className="h-16 w-auto object-contain"
-          />
-        </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Alertas de preço
+            </h1>
 
-        <div>
-          <h1 className="text-3xl font-bold">Alertas de preço</h1>
-
-          <p className="text-muted-foreground">
-            Gerencie seus alertas cadastrados
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full max-w-md">
-            <Search
-              className="
-        absolute left-3 top-1/2
-        size-4 -translate-y-1/2
-        text-muted-foreground
-      "
-            />
-
-            <Input
-              placeholder="Buscar produto..."
-              className="pl-9"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <p className="text-muted-foreground">
+              Gerencie seus alertas cadastrados
+            </p>
           </div>
-
-          <p className="text-sm text-muted-foreground">
-            Exibindo {filteredAlerts.length} de {alerts.length} alertas
-          </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Card
-            className={cn(
-              `
-      cursor-pointer
-      transition-all duration-200
-      hover:-translate-y-1
-      hover:shadow-lg
-    `,
-              statusFilter === "all" &&
-                `
-      border-primary
-      shadow-lg
-      ring-2 ring-primary/20
-      -translate-y-1
-      bg-primary/5
-    `,
-            )}
-            onClick={() => setStatusFilter("all")}
-          >
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-primary/10 p-3 text-primary">
-                <Bell />
-              </div>
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
-              <div>
-                <p className="text-sm text-muted-foreground">Total</p>
+              <Input
+                placeholder="Buscar produto..."
+                className="pl-9"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
 
-                <h3 className="text-2xl font-bold">{filteredAlerts.length}</h3>
-              </div>
-            </CardContent>
-          </Card>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as "all" | "active" | "inactive")
+              }
+            >
+              <SelectTrigger
+                size="sm"
+                className="w-full cursor-pointer sm:w-44"
+              >
+                <div className="flex items-center gap-2">
+                  <Bell className="size-4 text-muted-foreground" />
+                  <SelectValue placeholder="Status" />
+                </div>
+              </SelectTrigger>
 
-          <Card
-            className={cn(
-              `
-      cursor-pointer
-      transition-all duration-200
-      hover:-translate-y-1
-      hover:shadow-lg
-    `,
-              statusFilter === "active" &&
-                `
-      border-green-500
-      shadow-lg
-      ring-2 ring-green-500/20
-      -translate-y-1
-      bg-green-500/5
-    `,
-            )}
-            onClick={() => setStatusFilter("active")}
-          >
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-green-500/10 p-3 text-green-500">
-                <Power className="text-green-600" />
-              </div>
+              <SelectContent>
+                <SelectItem value="all" className="text-sm">
+                  Todos
+                </SelectItem>
 
-              <div>
-                <p className="text-sm text-muted-foreground">Ativos</p>
+                <SelectItem value="active" className="text-sm">
+                  Ativos
+                </SelectItem>
 
-                <h3 className="text-2xl font-bold">{activeAlerts}</h3>
-              </div>
-            </CardContent>
-          </Card>
+                <SelectItem value="inactive" className="text-sm">
+                  Inativos
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {statusFilter === "all" &&
+              `Exibindo ${filteredAlerts.length} alertas`}
 
-          <Card
-            className={cn(
-              `
-      cursor-pointer
-      transition-all duration-200
-      hover:-translate-y-1
-      hover:shadow-lg
-    `,
-              statusFilter === "inactive" &&
-                `
-      border-red-500
-      shadow-lg
-      ring-2 ring-red-500/20
-      -translate-y-1
-      bg-red-500/5
-    `,
-            )}
-            onClick={() => setStatusFilter("inactive")}
-          >
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-xl bg-red-500/10 p-3 text-red-500">
-                <Power className="text-red-600" />
-              </div>
+            {statusFilter === "active" &&
+              `${filteredAlerts.length} alertas ativos`}
 
-              <div>
-                <p className="text-sm text-muted-foreground">Inativos</p>
-
-                <h3 className="text-2xl font-bold">{inactiveAlerts}</h3>
-              </div>
-            </CardContent>
-          </Card>
+            {statusFilter === "inactive" &&
+              `${filteredAlerts.length} alertas inativos`}
+          </p>
         </div>
 
         {isLoading ? (
