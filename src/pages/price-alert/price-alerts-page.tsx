@@ -3,7 +3,6 @@
 import { Bell, Power, Search, Trash2 } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -36,8 +35,6 @@ import {
 } from "@/components/ui/sidebar";
 
 export function PriceAlertsPage() {
-  const navigate = useNavigate();
-
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
