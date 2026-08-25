@@ -1,4 +1,4 @@
-import { getToken } from "@/lib/auth";
+import { getToken, logout } from "@/lib/auth";
 import { Navigate, useLocation } from "react-router-dom";
 
 type Props = {
@@ -10,6 +10,7 @@ export function PrivateRoute({ children }: Props) {
   const location = useLocation();
 
   if (!token) {
+    logout();
     return <Navigate to="/" replace state={{ from: location }} />;
   }
 
